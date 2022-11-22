@@ -1,6 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('hardhat-contract-sizer');
-const {account, apiKey} = require('./env.json');
+const {account, apiKey} = require('./hardhat.env.json');
 
 
 
@@ -39,5 +39,14 @@ module.exports = {
   },
   etherscan:{
     apiKey: apiKey,
-  }
+  },
+  abiExporter: {
+    path: "../reignover/src/utils/abis",
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    only: [],
+    spacing: 2,
+    pretty: false,
+  },
 };
