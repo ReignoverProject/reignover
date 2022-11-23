@@ -3,8 +3,6 @@ require('hardhat-contract-sizer');
 const {account, apiKey} = require('./hardhat.env.json');
 
 
-
-import('hardhat/config').HardhatUserConfig 
 module.exports = {
   networks: {
     localhost: {

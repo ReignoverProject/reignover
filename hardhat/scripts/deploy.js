@@ -23,10 +23,10 @@ async function main() {
   console.log("Contract address:", nftContract.address);
   console.log("Post-deploy balance:", (await deployer.getBalance()).toString());
 
-  await hre.run('verify:verify', {
-    address: nftContract.address,
-    constructorArguments: [_name, _symbol],
-  });
+  // await hre.run('verify:verify', {
+  //   address: nftContract.address,
+  //   constructorArguments: [_name, _symbol],
+  // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere
