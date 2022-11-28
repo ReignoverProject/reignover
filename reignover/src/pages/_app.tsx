@@ -1,7 +1,8 @@
-import { type AppType } from "next/dist/shared/lib/utils";
 
+import { type AppType } from "next/dist/shared/lib/utils";
 import "../styles/globals.css";
 import { Web3ContextProvider } from "../utils/context";
+
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
