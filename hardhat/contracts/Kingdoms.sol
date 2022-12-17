@@ -4,7 +4,6 @@ pragma solidity ^0.8.7;
 import "./interfaces/IResourceToken.sol";
 import "./libs/Editor.sol"; // editor modifier and OZ-Ownable
 import "./interfaces/IBuilder.sol";
-import "./interfaces/IResearch.sol";
 
 /** 
     @title The city management contract
@@ -18,11 +17,11 @@ contract Kingdoms is Editor{
 
     IResourceToken public gameToken; // this will be the premium currency, like gold
     IBuilder public Builder; // builder contract
-    IResearch public Research; // research contract
-    address[] public resources; // list of resource tokens
+    // IResearch public Research; // research contract
+    // uint[] public resources; // list of resource tokens
     uint baseCityFee = 100*10**18; // 100 game tokens
-    uint forgeId = 6; // building ID for the forge, used to reduce research time
-    uint maxCities = 25; // cities per wallet
+    // uint forgeId = 6; // building ID for the forge, used to reduce research time
+    uint maxCities = 1; // cities per wallet
 
     // City is the base structure in the game. They can be traded between players (taken over)
     struct City {
@@ -94,15 +93,17 @@ contract Kingdoms is Editor{
     }
 
     function buildCity(string memory _name) external {
+        require(citiesPerOwner[msg.sender] < maxCities, "Cannot build more than max cities");
         // uint fee = ((citiesPerOwner[msg.sender] + 1)^2) * baseCityFee;
         // _payFee(fee);
         _createCity(_name);
     }
 
     // need to think this through a bit. currently general fee payer function
+    // 0 is gold token
     // probably change to burn
-    function _payFee(uint _fee) internal {
-        gameToken.transferFrom(msg.sender, address(this), _fee);
+    function _payFee(uint _fee, uint _id) internal {
+        gameToken.safeTransferFrom(msg.sender, address(this), _id, _fee, bytes(""));
     }
 
     /** @notice used for city takeovers
@@ -152,9 +153,9 @@ contract Kingdoms is Editor{
     }
 
     /** @notice sets the Research contract */
-    function setResearch(address _research) external onlyOwner {
-        Research = IResearch(_research);
-    }
+    // function setResearch(address _research) external onlyOwner {
+    //     Research = IResearch(_research);
+    // }
 
     function setGameTokenContract(address _newContract) external onlyOwner {
         gameToken = IResourceToken(_newContract);
@@ -164,20 +165,21 @@ contract Kingdoms is Editor{
     /** @notice used by resource manager when creating a new resource token
         @dev preservation of order of resources is critically important  
     */
-    function addResource(address _resourceAddress) external onlyEditor {
-        resources.push(_resourceAddress);
-    }
+    // function addResource(address _resourceAddress) external onlyEditor {
+    //     resources.push(_resourceAddress);
+    // }
 
-    /** @notice only to be used if a token needs to be replaced */
-    function editResource(uint _id, address _newAddress) external onlyOwner {
-        resources[_id] = _newAddress;
-    }
+    // /** @notice only to be used if a token needs to be replaced */
+    // function editResource(uint _id, address _newAddress) external onlyOwner {
+    //     resources[_id] = _newAddress;
+    // }
 
-    function getTotalForges(address _player) external view returns(uint) {
-        uint totalForges;
-        for (uint i = 0; i < citiesPerOwner[_player]; i++) {
-            totalForges += cities[ownerCityList[_player][i]].buildings[forgeId];
-        }
-        return totalForges;
-    }
+    // add multiple cities in future
+    // function getTotalForges(address _player) external view returns(uint) {
+    //     uint totalForges;
+    //     for (uint i = 0; i < citiesPerOwner[_player]; i++) {
+    //         totalForges += cities[ownerCityList[_player][i]].buildings[forgeId];
+    //     }
+    //     return totalForges;
+    // }
 }

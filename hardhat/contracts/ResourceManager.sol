@@ -47,7 +47,9 @@ contract ResourceManager is Editor {
     // Cities can change ownership, so rewards are city-owner agnostic in the way that they do not reset when ownership is changed
 
     /** @notice create a reward pool for a building, buildings only have one pool
-        @param _baseReward base amount of tokens (no decimals), set to 0 to turn off */
+        @param _baseReward base amount of tokens (no decimals), set to 0 to turn off 
+        @param _rewardtoken is id of resource token in the ERC1155 contract
+    */
     function setRewardPool(uint _buildingId, uint _rewardtoken, uint _baseReward) external onlyOwner {
         buildingToRewardPool[_buildingId].buildingId = _buildingId;
         buildingToRewardPool[_buildingId].rewardToken = _rewardtoken;
@@ -61,6 +63,9 @@ contract ResourceManager is Editor {
         cityBuildingLastClaim[_cityId][_buildingId] = block.timestamp;
     }
 
+    /**
+     * Function that updates building levels. Usually used by Builder contract when leveling up a building
+     */
     function setBuildingLevel(uint _cityId, uint _buildingId) external onlyEditor {
         uint[] memory cityBuildingLevels = Kingdoms.getCityBuildingsWithLevel(_cityId);
         cityBuildingLevel[_cityId][_buildingId] = cityBuildingLevels[_buildingId];
@@ -77,7 +82,7 @@ contract ResourceManager is Editor {
         for(uint i = 0; i < pendingRewards.length; i++) {
             cityBuildingLastClaim[_cityId][i] = block.timestamp;
             if(pendingRewards[i] > 0) {
-                Resources.mint(cityOwner, resourceTokens[buildingToRewardPool[i].rewardToken], pendingRewards[i]);
+                Resources.mint(cityOwner, buildingToRewardPool[i].rewardToken, pendingRewards[i]);
             }
         }
     }
