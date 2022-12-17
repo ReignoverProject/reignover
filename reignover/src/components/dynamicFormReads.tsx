@@ -7,11 +7,10 @@ import type { AbiInput } from "../utils/types/abi";
 interface IDynamicForm {
   inputs: AbiInput[];
   name: string;
-  submitFn: "view" | "write";
   buttonName: string;
 }
 
-export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name, submitFn, buttonName }) => {
+export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name, buttonName }) => {
   const inputstate = inputs.reduce((acc, cur) => ({ ...acc, [cur.name]: "" }), {})
   const [inputFields, setInputFields] = useState<Record<string, string>>(inputstate)
   const [args, setArgs] = useState<string[]>()
@@ -19,7 +18,9 @@ export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name, submitFn, bu
       addressOrName: VolumeNFTAddress,
       contractInterface: volumeABI,
       functionName: name,
-      args: args
+      args: args,
+      cacheTime: 30_000,
+      enabled: false,
   })
 
   const submit = (e: React.SyntheticEvent) => {

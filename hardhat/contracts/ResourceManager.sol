@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "./ResourceToken.sol";
+import "./Resources.sol";
 import "./libs/Editor.sol";
-import "./interfaces/IBuilder.sol";
-import "./interfaces/IResearch.sol";
 import "./interfaces/IKingdoms.sol";
-import "./VotingToken.sol";
 import "./interfaces/IResourceToken.sol";
 
 
@@ -15,11 +12,9 @@ import "./interfaces/IResourceToken.sol";
 
 contract ResourceManager is Editor {
 
-    address[] public resourceTokens;
-    mapping(address => bool) public isVotingToken;
-    IBuilder public Builder;
+    uint[] public resourceTokens;
     IKingdoms public Kingdoms;
-    IResearch public Research;
+    IResourceToken public Resources;
     
     struct RewardPool {
         uint buildingId;
@@ -34,22 +29,11 @@ contract ResourceManager is Editor {
     event UpdatedBuildingPool(uint buildingId, uint rewardToken, uint baseReward);
     event NewResource(uint id, address resource, string name);
 
-    /** @notice creates a new ERC20 resource token and adds it to the Builder contract */
-    function createResourceToken(string memory _name, string memory _symbol, bool _voting) external onlyOwner {
-        address tokenAddress;
-        if (_voting) {
-            VotingToken token = new VotingToken(_name, _symbol);
-            tokenAddress = address(token);
-            isVotingToken[tokenAddress] = true;
-        } else {
-            ResourceToken token = new ResourceToken(_name, _symbol);
-            tokenAddress = address(token);
-        }
+    /** @notice creates a new ERC1155 resource token */
+    function createResourceToken(string memory _name, string memory _symbol) external onlyOwner {
+        
         resourceTokens.push(tokenAddress);
         IResourceToken(tokenAddress).addEditor(address(this)); 
-        Builder.addResource(tokenAddress);
-        Kingdoms.addResource(tokenAddress);
-        Research.addResource(tokenAddress);
         emit NewResource(resourceTokens.length-1, tokenAddress, _name);
     }
 
