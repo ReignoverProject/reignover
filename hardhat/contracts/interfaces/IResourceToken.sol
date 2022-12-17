@@ -8,7 +8,7 @@ pragma solidity ^0.8.0;
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
 interface IResourceToken {
-    function createCollection(uint256 _maxSupply, string memory _uri, string memory _name, string memory _uri) external returns(uint256);
+    function createCollection(uint256 _maxSupply, string memory _uri, string memory _name, string memory _symbol) external returns(uint256);
     function mint(address _to, uint256 _id, uint256 _amount) external;
 
     /**

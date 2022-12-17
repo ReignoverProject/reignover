@@ -27,19 +27,13 @@ contract ResourceManager is Editor {
     mapping(uint => mapping(uint => uint)) cityBuildingLevel; // records the building level for current reward cycle
 
     event UpdatedBuildingPool(uint buildingId, uint rewardToken, uint baseReward);
-    event NewResource(uint id, address resource, string name);
+    event NewResource(uint id, string name);
 
     /** @notice creates a new ERC1155 resource token */
     function createResourceToken(string memory _name, string memory _symbol) external onlyOwner {
-        
-        resourceTokens.push(tokenAddress);
-        IResourceToken(tokenAddress).addEditor(address(this)); 
-        emit NewResource(resourceTokens.length-1, tokenAddress, _name);
-    }
-
-    /** @notice sets the builder contract */
-    function setBuilder(address _builder) external onlyOwner {
-        Builder = IBuilder(_builder);
+        uint id = Resources.createCollection(999999, "temp uri", _name, _symbol);
+        resourceTokens.push(id);
+        emit NewResource(id, _name);
     }
 
     /** @notice sets the Kingdoms contract */
@@ -47,31 +41,13 @@ contract ResourceManager is Editor {
         Kingdoms = IKingdoms(_kingdoms);
     }
 
-    /** @notice sets the Research contract */
-    function setResearch(address _research) external onlyOwner {
-        Research = IResearch(_research);
-    }
-
-    /** @notice add an editor (minter) to a specific resource token */
-    function resourceAddEditor(uint _resourceId, address _newEditor) external onlyOwner {
-        IResourceToken(resourceTokens[_resourceId]).addEditor(_newEditor);
-    }
-
-    /** @notice remove an editor (minter) from a specific resource token */
-    function resourceRemoveEditor(uint _resourceId, address _newEditor) external onlyOwner {
-        IResourceToken(resourceTokens[_resourceId]).deactivateEditor(_newEditor);
-    }
-
-    /** @notice takes a snapshot for voting purposes */
-    function takeSnapshot(uint _resourceId) external onlyOwner {}
-
     // The next section manages the minting of tokens over time to cities depending on their building levels
     // This is similar to a standard farm contract, but instead of getting more rewards based on tokens staked, it's based on level of the building
     // When an appropriate building is created, it sets the reward start timestamp
     // Cities can change ownership, so rewards are city-owner agnostic in the way that they do not reset when ownership is changed
 
     /** @notice create a reward pool for a building, buildings only have one pool
-        @param _baseReward base sure to write with 18 decimals in mind, set to 0 to turn off */
+        @param _baseReward base amount of tokens (no decimals), set to 0 to turn off */
     function setRewardPool(uint _buildingId, uint _rewardtoken, uint _baseReward) external onlyOwner {
         buildingToRewardPool[_buildingId].buildingId = _buildingId;
         buildingToRewardPool[_buildingId].rewardToken = _rewardtoken;
@@ -90,7 +66,9 @@ contract ResourceManager is Editor {
         cityBuildingLevel[_cityId][_buildingId] = cityBuildingLevels[_buildingId];
     }
 
-    /** @notice mints built-up resources to city owner */
+    /** @notice mints built-up resources to city owner 
+     * note think about turning this into batch mint of some sort
+    */
     function _claimCityResources(uint _cityId) internal {
         address cityOwner = Kingdoms.getCityOwner(_cityId);
         // do we care if non-city-owner calls this function?
@@ -99,7 +77,7 @@ contract ResourceManager is Editor {
         for(uint i = 0; i < pendingRewards.length; i++) {
             cityBuildingLastClaim[_cityId][i] = block.timestamp;
             if(pendingRewards[i] > 0) {
-                IResourceToken(resourceTokens[buildingToRewardPool[i].rewardToken]).mint(cityOwner, pendingRewards[i]);
+                Resources.mint(cityOwner, resourceTokens[buildingToRewardPool[i].rewardToken], pendingRewards[i]);
             }
         }
     }
@@ -107,14 +85,6 @@ contract ResourceManager is Editor {
     /** @notice user function to claim one city's pending resources */
     function claimCityResources(uint _cityId) external {
         _claimCityResources(_cityId);
-    }
-
-    /** @notice claims pending resources from all cities */
-    function claimCityResourcesAll(address _player) external {
-        uint[] memory cities = Kingdoms.getOwnerCities(_player);
-        for(uint i = 0; i < cities.length; i++) {
-            _claimCityResources(cities[i]);
-        }
     }
 
     /** @notice returns an array of pending resources for each building of a city */
