@@ -8,7 +8,7 @@ import "./interfaces/IResourceToken.sol";
 
 
 // Setup: set Builder as editor of this contract, this contract also needs to be an editor of Builder
-// - set Builder, Research, Kingdoms contracts
+// - set Resources, Kingdoms contracts
 
 contract ResourceManager is Editor {
 
@@ -41,6 +41,10 @@ contract ResourceManager is Editor {
         Kingdoms = IKingdoms(_kingdoms);
     }
 
+    /** @notice sets the Resources contract */
+    function setResources(address _newContract) external onlyOwner {
+        Resources = IResourceToken(_newContract);
+    }
     // The next section manages the minting of tokens over time to cities depending on their building levels
     // This is similar to a standard farm contract, but instead of getting more rewards based on tokens staked, it's based on level of the building
     // When an appropriate building is created, it sets the reward start timestamp

@@ -12,9 +12,20 @@ import "./interfaces/IResourceManager.sol";
 
 contract Builder is Editor {
 
+    constructor (
+        IKingdoms _kingdom,
+        IResourceManager _resourceManager,
+        IResourceToken _resources
+    ) {
+        Kingdoms = _kingdom;
+        ResourceManager = _resourceManager;
+        ResourceTokens = _resources;
+    }
+
     IKingdoms public Kingdoms; // Kingdoms Contract    
     IResourceManager public ResourceManager; // ResourceManager contract
-    address[] public resources; // list of resource tokens
+    IResourceToken public ResourceTokens; // Resources Contract
+    uint[] public resources; // list of resource tokens
     uint buildingCount; // count of active buildings
     mapping(uint => string) public buildingIdToName; // may need to determine the best way to handle the buildings list
     mapping(uint => mapping(uint => uint)) buildingLevelRequirements; // maps buildings with required buildings + level
@@ -122,13 +133,13 @@ contract Builder is Editor {
     /** @notice used by resource manager when creating a new resource token
         @dev preservation of order of resources is critically important  
     */
-    function addResource(address _resourceAddress) external onlyEditor {
-        resources.push(_resourceAddress);
+    function addResource(uint _id) external onlyEditor {
+        resources.push(_id);
     }
 
     /** @notice only to be used if a token needs to be replaced */
-    function editResource(uint _id, address _newAddress) external onlyOwner {
-        resources[_id] = _newAddress;
+    function editResource(uint _index, uint _newid) external onlyOwner {
+        resources[_index] = _newid;
     }
 
     function getResourceCount() external view returns(uint) {
@@ -137,6 +148,7 @@ contract Builder is Editor {
 
     /** @notice starts building the next level of a building if all requirements met
         @dev pulls building data from Kingdoms contract
+        TODO turn this into batch transfer
     */
     function prepLevelUpBuilding(uint _cityId, uint _buildingId) external {
         require(Kingdoms.getCityOwner(_cityId) == msg.sender, "Not owner of city");
@@ -147,7 +159,8 @@ contract Builder is Editor {
         uint[] memory resourceCost = getCostOfNextLevel(cityBuildingLevels, _buildingId);
         for (uint i = 0; i < resources.length; i++) {
             if (resourceCost[i] > 0) {
-                IResourceToken(resources[i]).burnFrom(msg.sender, resourceCost[i]);
+                // batch transfer this
+                ResourceTokens.safeTransferFrom(msg.sender, address(0), resources[i], resourceCost[i], bytes(""));
             }
         }
         uint timeCost = getNextLevelTimeRequirement(cityBuildingLevels, _buildingId);
@@ -217,5 +230,9 @@ contract Builder is Editor {
 
     function setResourceManagerContract(address _newContract) external onlyOwner {
         ResourceManager = IResourceManager(_newContract);
+    }
+
+    function setResourceTokenContract(address _newContract) external onlyOwner {
+        ResourceTokens = IResourceToken(_newContract);
     }
 }

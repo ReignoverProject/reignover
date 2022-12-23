@@ -11,11 +11,11 @@ import "./interfaces/IBuilder.sol";
     @notice Allows creation and transfering of cities. Allows creating new buildings and changing levels.
  */
 
-// Setup: add Builder contract as an editor, set gameTokena and Builder contracts
+// Setup: add Builder contract as an editor, set resourceToken and Builder contracts
 
 contract Kingdoms is Editor{
 
-    IResourceToken public gameToken; // this will be the premium currency, like gold
+    IResourceToken public resourceToken; // this will be the premium currency, like gold
     IBuilder public Builder; // builder contract
     // IResearch public Research; // research contract
     // uint[] public resources; // list of resource tokens
@@ -40,7 +40,7 @@ contract Kingdoms is Editor{
     event NameChange(uint indexed cityId, string newName);
     event NewBuildingLevel(uint indexed cityId, uint indexed buildingId, uint previousLevel, uint newLevel);
     event NewBuilderContract(address newContract);
-    event NewGameTokenContract(address newcontract);
+    event NewresourceTokenContract(address newcontract);
 
     modifier isCityOwner(uint _cityId) {
         require(msg.sender == cityIdToOwner[_cityId]);
@@ -103,7 +103,7 @@ contract Kingdoms is Editor{
     // 0 is gold token
     // probably change to burn
     function _payFee(uint _fee, uint _id) internal {
-        gameToken.safeTransferFrom(msg.sender, address(this), _id, _fee, bytes(""));
+        resourceToken.safeTransferFrom(msg.sender, address(this), _id, _fee, bytes(""));
     }
 
     /** @notice used for city takeovers
@@ -157,9 +157,9 @@ contract Kingdoms is Editor{
     //     Research = IResearch(_research);
     // }
 
-    function setGameTokenContract(address _newContract) external onlyOwner {
-        gameToken = IResourceToken(_newContract);
-        emit NewGameTokenContract(_newContract);
+    function setresourceTokenContract(address _newContract) external onlyOwner {
+        resourceToken = IResourceToken(_newContract);
+        emit NewresourceTokenContract(_newContract);
     }
 
     /** @notice used by resource manager when creating a new resource token

@@ -8,7 +8,7 @@ import "./libs/Editor.sol";
 // some func to get ownerOf for each ID - create specific ID for individual tokens in collection
 // recieve function
 
-contract VolumeNFTManager is ERC1155URIStorage, Editor {
+contract Resources is ERC1155URIStorage, Editor {
     constructor()
         ERC1155("Reignover Token")
     { }

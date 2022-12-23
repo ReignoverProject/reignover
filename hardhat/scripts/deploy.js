@@ -7,21 +7,28 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
 
-const _name = 'TestVolumeNFTManager';
-const _symbol = 'TVN';
 
 async function main() {
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const NFTContract = await hre.ethers.getContractFactory('VolumeNFTManager');
-  const nftContract = await NFTContract.deploy(_name, _symbol);
+  const resources = await hre.ethers.getContractFactory('Resources');
+  const resourceContract = await resources.deploy();
+  await resourceContract.deployed();
 
-  await nftContract.deployed();
+  const kingdoms = await hre.ethers.getContractFactory('Kingdoms');
+  const kingdomsContract = await kingdoms.deploy();
+  await kingdomsContract.deployed();
   
-  console.log("Contract address:", nftContract.address);
-  console.log("Post-deploy balance:", (await deployer.getBalance()).toString());
+  const resourceManager = await hre.ethers.getContractFactory('ResourceManager');
+  const resourceManagerContract = await resourceManager.deploy();
+  await resourceManagerContract.deployed();
+  
+  const builder = await hre.ethers.getContractFactory('Builder');
+  // Kingdoms, resourcemanager, resources for constructor
+  const builderContract = await builder.deploy(kingdomsContract.address, resourceManagerContract.address, resourceContract.address);
+  await builderContract.deployed();
 
   // await hre.run('verify:verify', {
   //   address: nftContract.address,
