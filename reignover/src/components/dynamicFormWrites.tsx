@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
-import { volumeABI } from "../utils/abis/VolumeNFTManager";
-import { VolumeNFTAddress } from "../utils/constants";
-import type { AbiInput } from "../utils/types/abi";
+import type { AbiInput, AbiItem } from "../utils/types/abi";
 
 interface IDynamicForm {
   inputs: AbiInput[];
   name: string;
   buttonName: string;
+  contractAddress: string;
+  ABI: AbiItem[] | any;
 }
 
-export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name,  buttonName }) => {
+export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name,  buttonName, contractAddress, ABI }) => {
   const inputstate = inputs.reduce((acc, cur) => ({ ...acc, [cur.name]: "" }), {})
   const [inputFields, setInputFields] = useState<Record<string, string>>(inputstate)
   const [args, setArgs] = useState<string[]>()
   const { config } = usePrepareContractWrite({
-      addressOrName: VolumeNFTAddress,
-      contractInterface: volumeABI,
+      addressOrName: contractAddress,
+      contractInterface: ABI,
       functionName: name,
       args: args,
   })

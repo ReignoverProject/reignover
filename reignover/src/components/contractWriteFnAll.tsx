@@ -1,8 +1,13 @@
-import { volumeABI } from "../utils/abis/VolumeNFTManager"
+import { AbiItem } from "../utils/types/abi";
 import { Dynamicform } from "./dynamicFormWrites"
 
-export const ContractWriteFunctions: React.FC = () => {
-  const viewFunctions = volumeABI.filter(item => item.type === 'function' && item.stateMutability !== ('view' || 'pure'))
+interface IFN {
+  ABI: AbiItem[]
+  contractAddress: string;
+}
+
+export const ContractWriteFunctions: React.FC<IFN> = ({contractAddress, ABI}) => {
+  const viewFunctions = ABI.filter(item => item.type === 'function' && item.stateMutability !== ('view' || 'pure'))
   return (
     <div className="flex flex-col gap-2">
       <p className="text-bold mb-2 text-lg">Write Functions</p>
@@ -10,7 +15,7 @@ export const ContractWriteFunctions: React.FC = () => {
         <div key={key}>
           <p className="text-white" >{item.name}</p>
           <div className="flex flex-col gap-1">
-            <Dynamicform inputs={item.inputs} buttonName={"View"} name={item.name!.toString()} />
+            <Dynamicform inputs={item.inputs!} buttonName={"Write"} name={item.name!.toString()} contractAddress={contractAddress} ABI={ABI} />
           </div>
         </div>
       ))}

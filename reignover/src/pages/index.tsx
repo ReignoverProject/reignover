@@ -3,6 +3,9 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { ContractViewFunctions } from "../components/contractViewFnAll";
 import { ContractWriteFunctions } from "../components/contractWriteFnAll";
+import { resourcesABI } from "../utils/abis/Resources";
+import { VolumeNFTAddress } from "../utils/constants";
+import { AbiItem } from "../utils/types/abi";
 
 const Home: NextPage = () => {
   return (
@@ -16,8 +19,8 @@ const Home: NextPage = () => {
         <div>
           <ConnectKitButton />
           <div className="flex flex-row justify-between">
-            <ContractWriteFunctions />
-            <ContractViewFunctions />
+            <ContractWriteFunctions ABI={resourcesABI as AbiItem[]} contractAddress={VolumeNFTAddress} />
+            <ContractViewFunctions ABI={resourcesABI as AbiItem[]} contractAddress={VolumeNFTAddress} />
           </div>
         </div>
       </main>
