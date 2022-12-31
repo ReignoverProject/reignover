@@ -38,7 +38,7 @@ export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name, buttonName, 
 
   return (
     <form onSubmit={submit}>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 py-1">
         {inputs.map((i, key) => (
           <input
             className="text-gray-700"
