@@ -160,7 +160,7 @@ contract Builder is Editor {
         for (uint i = 0; i < resources.length; i++) {
             if (resourceCost[i] > 0) {
                 // batch transfer this
-                ResourceTokens.safeTransferFrom(msg.sender, address(0), resources[i], resourceCost[i], bytes(""));
+                ResourceTokens.safeTransferFrom(msg.sender, address(0xdead), resources[i], resourceCost[i], bytes(""));
             }
         }
         uint timeCost = getNextLevelTimeRequirement(cityBuildingLevels, _buildingId);

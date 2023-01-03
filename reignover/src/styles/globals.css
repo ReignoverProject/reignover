@@ -12,3 +12,8 @@ button {
   border-radius: .5rem;
   padding: .25rem;
 }
+
+input {
+  padding: .1rem;
+  border-radius: .25rem;
+}

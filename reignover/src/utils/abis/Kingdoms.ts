@@ -493,7 +493,7 @@ export const kingdomsABI =  [
           "type": "address"
         }
       ],
-      "name": "setresourceTokenContract",
+      "name": "setResourceTokenContract",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

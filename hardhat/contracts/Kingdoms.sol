@@ -79,7 +79,8 @@ contract Kingdoms is Editor{
     // Also  building new cities requires senator. Probably this will become an onlyEditor function to be managed by units contract?
     /** @notice creates a city for the sender
         @param _name sets the city's name
-        @dev takes msg.sender value for the owner */
+        @dev takes msg.sender value for the owner 
+    */
     function _createCity(string memory _name) internal {
         cities.push();
         cities[cities.length-1].name = _name;
@@ -157,7 +158,7 @@ contract Kingdoms is Editor{
     //     Research = IResearch(_research);
     // }
 
-    function setresourceTokenContract(address _newContract) external onlyOwner {
+    function setResourceTokenContract(address _newContract) external onlyOwner {
         resourceToken = IResourceToken(_newContract);
         emit NewresourceTokenContract(_newContract);
     }
