@@ -1,7 +1,7 @@
 {
   "name": "hardhat-project",
   "scripts": {
-    "test": "hardhat test",
+    "test": "hardhat test test/ReignTest",
     "size": "hardhat size-contracts",
     "compile": "hardhat compile",
     "chain": "hardhat node --network hardhat",

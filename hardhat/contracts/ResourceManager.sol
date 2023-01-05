@@ -4,17 +4,22 @@ pragma solidity ^0.8.7;
 import "./Resources.sol";
 import "./libs/Editor.sol";
 import "./interfaces/IKingdoms.sol";
-import "./interfaces/IResourceToken.sol";
+import "./interfaces/IResourceToken.sol"; 
 
 
 // Setup: set Builder as editor of this contract, this contract also needs to be an editor of Builder
 // - set Resources, Kingdoms contracts
+
+interface IBuilder {
+    function addResource(_resourceId) external;
+}
 
 contract ResourceManager is Editor {
 
     uint[] public resourceTokens;
     IKingdoms public Kingdoms;
     IResourceToken public Resources;
+    IBuilder public Builder;
     
     struct RewardPool {
         uint buildingId;
@@ -101,7 +106,7 @@ contract ResourceManager is Editor {
         uint[] memory cityBuildingLevels = Kingdoms.getCityBuildingsWithLevel(_cityId);
         uint[] memory pendingResources = new uint[](cityBuildingLevels.length);
         for(uint i = 0; i < cityBuildingLevels.length; i++) {
-            pendingResources[cityBuildingLevels.length] = 
+            pendingResources[i] = 
                 ((cityBuildingLevels[i]**2) * buildingToRewardPool[i].baseReward * (block.timestamp - cityBuildingLastClaim[_cityId][i]) / 60);
         }
         return pendingResources;
