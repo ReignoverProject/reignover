@@ -21,6 +21,8 @@ export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name, buttonName, 
       args: args,
       cacheTime: 30_000,
       enabled: false,
+      // used in newer version of wagmi, need to explore this a bit more. For some reason I used an older wagmi version because of the stack. Check to see if it can be upgraded.
+      // structuralSharing: (oldData, newData) => deepEqual(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData),
   })
 
   const submit = (e: React.SyntheticEvent) => {

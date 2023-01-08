@@ -59,7 +59,30 @@ const buildings = [
     resReq: [0, 100, 60, 60, 60],
     maxLvl: 100 
   },
-]
+];
+
+const resourceTokens = [
+  {
+    name: "Reignover Gold",
+    symbol: "",
+  },
+  {
+    name: "Reignover Wood",
+    symbol: "rWood",
+  },
+  {
+    name: "Reignover Stone",
+    symbol: "rStone",
+  },
+  {
+    name: "Reignover Iron",
+    symbol: "rIron",
+  },
+  {
+    name: "Reignover Food",
+    symbol: "rFood",
+  },
+];
 
 describe("Reignover", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -99,21 +122,22 @@ describe("Reignover", function () {
     await resourceManagerContract.addEditor(builderContract.address);
     await resourceManagerContract.setKingdoms(kingdomsContract.address);
     await resourceManagerContract.setResources(resourceContract.address);
+    await resourceManagerContract.setBuilder(BuiAdd);
     await builderContract.addEditor(resourceManagerContract.address);
     await builderContract.addEditor(deployer.address);
 
     // Create resources and buildings
-    await resourceManagerContract.createResourceToken("Reignover Gold", "rGold");
-    await resourceManagerContract.createResourceToken("Reignover Wood", "rWood");
-    await resourceManagerContract.createResourceToken("Reignover Stone", "rStone");
-    await resourceManagerContract.createResourceToken("Reignover Iron", "rIron");
-    await resourceManagerContract.createResourceToken("Reignover Food", "rFood");
-    // build this v in to the resource manager function ^
-    await builderContract.addResource(0);
-    await builderContract.addResource(1);
-    await builderContract.addResource(2);
-    await builderContract.addResource(3);
-    await builderContract.addResource(4);
+    await resourceManagerContract.createResourceToken(resourceTokens[0].name, resourceTokens[0].symbol);
+    await resourceManagerContract.createResourceToken(resourceTokens[1].name, resourceTokens[1].symbol);
+    await resourceManagerContract.createResourceToken(resourceTokens[2].name, resourceTokens[2].symbol);
+    await resourceManagerContract.createResourceToken(resourceTokens[3].name, resourceTokens[3].symbol);
+    await resourceManagerContract.createResourceToken(resourceTokens[4].name, resourceTokens[4].symbol);
+    // // build this v in to the resource manager function ^
+    // await builderContract.addResource(0);
+    // await builderContract.addResource(1);
+    // await builderContract.addResource(2);
+    // await builderContract.addResource(3);
+    // await builderContract.addResource(4);
     //addBuilding(name, levelRequirements[], resourceRequirements[], maxLevel) create objects for these
     await builderContract.addBuilding(buildings[0].name, buildings[0].lvlReq, buildings[0].resReq, buildings[0].maxLvl);
     await builderContract.addBuilding(buildings[1].name, buildings[1].lvlReq, buildings[1].resReq, buildings[2].maxLvl);
@@ -156,25 +180,26 @@ describe("Reignover", function () {
       expect(await kingdomsContract.resourceToken()).to.equal(ResAdd);
       expect(await resourceManagerContract.Kingdoms()).to.equal(KinAdd);
       expect(await resourceManagerContract.Resources()).to.equal(ResAdd);
+      expect(await resourceManagerContract.Builder()).to.equal(BuiAdd);
 
     });
 
     it("Resource Manager should have created the right number of resource tokens", async function () {
       const { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, builderContract, ResAdd, ResManAdd, BuiAdd, KinAdd } = await loadFixture(deployContractsFixture);
      
-      expect(await resourceContract.getTotalCollections()).to.equal("5")
+      expect(await resourceContract.getTotalCollections()).to.equal(resourceTokens.length)
     });
 
     it("Builder should have right number of resources", async function () {
       const { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, builderContract, ResAdd, ResManAdd, BuiAdd, KinAdd } = await loadFixture(deployContractsFixture);
      
-      expect(await builderContract.getResourceCount()).to.equal("5")
+      expect(await builderContract.getResourceCount()).to.equal(resourceTokens.length)
     });
 
     it("Builder should have right number of buildings", async function () {
       const { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, builderContract, ResAdd, ResManAdd, BuiAdd, KinAdd } = await loadFixture(deployContractsFixture);
      
-      expect(await builderContract.getBuildingCount()).to.equal("5")
+      expect(await builderContract.getBuildingCount()).to.equal(buildings.length)
     });
 
 

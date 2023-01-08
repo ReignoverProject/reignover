@@ -11,7 +11,7 @@ import "./interfaces/IResourceToken.sol";
 // - set Resources, Kingdoms contracts
 
 interface IBuilder {
-    function addResource(_resourceId) external;
+    function addResource(uint _id) external;
 }
 
 contract ResourceManager is Editor {
@@ -36,8 +36,9 @@ contract ResourceManager is Editor {
 
     /** @notice creates a new ERC1155 resource token */
     function createResourceToken(string memory _name, string memory _symbol) external onlyOwner {
-        uint id = Resources.createCollection(999999, "temp uri", _name, _symbol);
+        uint id = Resources.createCollection(999999, "Reignover Project", _name, _symbol);
         resourceTokens.push(id);
+        Builder.addResource(id);
         emit NewResource(id, _name);
     }
 
@@ -50,6 +51,12 @@ contract ResourceManager is Editor {
     function setResources(address _newContract) external onlyOwner {
         Resources = IResourceToken(_newContract);
     }
+
+    /** @notice sets the Builder contract */
+    function setBuilder(address _newContract) external onlyOwner {
+        Builder = IBuilder(_newContract);
+    }
+
     // The next section manages the minting of tokens over time to cities depending on their building levels
     // This is similar to a standard farm contract, but instead of getting more rewards based on tokens staked, it's based on level of the building
     // When an appropriate building is created, it sets the reward start timestamp
