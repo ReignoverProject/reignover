@@ -12,7 +12,7 @@ export const Web3ContextProvider = ({ children }: Props) => {
   return (
     <WagmiConfig client={client}>
       <ConnectKitProvider>
-      {children}
+        {children}
       </ConnectKitProvider>
     </WagmiConfig>
   )

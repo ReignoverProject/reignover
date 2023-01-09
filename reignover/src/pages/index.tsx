@@ -1,23 +1,17 @@
-import { ConnectKitButton } from "connectkit";
+
 import { type NextPage } from "next";
-import Head from "next/head";
-import { AdminView } from "../components/adminView";
+import { StartGame } from "../components/startGame";
 
 const Home: NextPage = () => {
   return (
-    <>
-      <Head>
-        <title>Reignover</title>
-        <meta name="description" content="City-building strategy game" />
-        <link rel="icon" href="/favicon.ico" />
-          </Head>
-      <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c] p-2">
-        <div className="flex flex-row justify-end mb-2">
-          <div className=""><ConnectKitButton /></div>
-        </div>
-        <AdminView />
-      </main>
-    </>
+    <div className="flex-col flex items-center">
+      <div>
+        <p>Hello</p> 
+      </div>
+      <div className="justify-center content-center items-center">
+        <StartGame />
+      </div>
+    </div>
   );
 };
 
