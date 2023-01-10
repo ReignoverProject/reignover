@@ -1,7 +1,7 @@
 import { getDefaultClient } from 'connectkit'
 import { chain, createClient } from 'wagmi'
 
-const chains = [chain.polygonMumbai, chain.hardhat]
+const chains = [chain.hardhat, chain.polygonMumbai]
 
 export const client = createClient(
   getDefaultClient({

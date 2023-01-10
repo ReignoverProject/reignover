@@ -1,4 +1,60 @@
-export const kingdomAddress = "0x0355B7B8cb128fA5692729Ab3AAa199C1753f726";
-export const builderAddress = "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8";
-export const resourceManagerAddress = "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB";
-export const resourcesAddress = "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7";
+export const kingdomAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+export const builderAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+export const resourceManagerAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+export const resourcesAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
+export const resourceTokens = [
+    {
+      name: "Reignover Gold",
+      symbol: "rGold",
+    },
+    {
+      name: "Reignover Wood",
+      symbol: "rWood",
+    },
+    {
+      name: "Reignover Stone",
+      symbol: "rStone",
+    },
+    {
+      name: "Reignover Iron",
+      symbol: "rIron",
+    },
+    {
+      name: "Reignover Food",
+      symbol: "rFood",
+    },
+  ];
+  
+export const buildings = [
+  {
+    name: "Capitol",
+    lvlReq: [0],
+    resReq: [0, 100, 100, 0, 0],
+    maxLvl: 100
+  },
+  {
+    name: "Forester Hut",
+    lvlReq: [1, 0],
+    resReq: [0, 100, 0, 0, 0],
+    maxLvl: 100 
+  },
+  {
+    name: "Stone Quarry",
+    lvlReq: [1,1,0],
+    resReq: [0, 100, 60, 0, 0],
+    maxLvl: 100 
+  },
+  {
+    name: "Iron Mine",
+    lvlReq: [1,1,1,0],
+    resReq: [0, 100, 60, 60, 0],
+    maxLvl: 100
+  },
+  {
+    name: "Farm",
+    lvlReq: [1,1,1,1,0],
+    resReq: [0, 100, 60, 60, 60],
+    maxLvl: 100 
+  },
+];

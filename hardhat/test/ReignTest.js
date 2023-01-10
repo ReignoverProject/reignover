@@ -64,7 +64,7 @@ const buildings = [
 const resourceTokens = [
   {
     name: "Reignover Gold",
-    symbol: "",
+    symbol: "rGold",
   },
   {
     name: "Reignover Wood",
