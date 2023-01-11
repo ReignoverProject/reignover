@@ -1,4 +1,4 @@
-import { useContractRead } from "wagmi"
+import { useContractRead, useContractReads } from "wagmi"
 import { builderABI } from "../abis/Builder"
 import { kingdomsABI } from "../abis/Kingdoms"
 import { builderAddress, kingdomAddress } from "../constants"
@@ -36,7 +36,7 @@ export const useGetOwnerCityId = (account: string) => {
 
 export const useGetBuildingLevels = (cityId: number) => {     
 
-    const {data, isLoading, isError, error} = useContractRead({
+    const {data, isLoading, isError, error, isSuccess} = useContractRead({
         addressOrName: kingdomAddress,
         contractInterface: kingdomsABI,
         functionName: 'getCityBuildingsWithLevel',
@@ -44,8 +44,90 @@ export const useGetBuildingLevels = (cityId: number) => {
         cacheTime: 30_000_000,
     })
 
-    const buildingLevels = data!.map(Number)
+    const buildingLevels = data
 
-    return buildingLevels
+    return {buildingLevels, isLoading, isSuccess}
+
+}
+
+export const useCheckBuildingLevelRequirements = (cityBuildingLevels: number[], buildingId: number) => {
+    const {data, isLoading, isError, error} = useContractRead({
+        addressOrName: builderAddress,
+        contractInterface: builderABI,
+        functionName: 'checkBuildingRequirementsMet',
+        args: [cityBuildingLevels, buildingId],
+        cacheTime: 30_000_000,
+    })
+
+    const canBuild = data !== undefined ? data[0] : false;
+    const buildingLevelRequirementsMet = data !== undefined ? data[1] : [false];
+
+    return {canBuild, buildingLevelRequirementsMet, isLoading, isError}
+
+}
+
+export const useCheckBuildingResourceRequirements = (cityBuildingLevels: number[], buildingId: number) => {
+    const {data, isLoading, isError, error} = useContractRead({
+        addressOrName: builderAddress,
+        contractInterface: builderABI,
+        functionName: 'getCostOfNextLevel',
+        args: [cityBuildingLevels, buildingId],
+        cacheTime: 30_000_000,
+    })
+
+    const buildingResourceRequirements = data !== undefined ? data : [0];
+
+    return {buildingResourceRequirements, isLoading, isError}
+
+}
+
+export const useCheckBuildingTimeRequirements = (cityBuildingLevels: number[], buildingId: number) => {
+    const {data, isLoading, isError, error} = useContractRead({
+        addressOrName: builderAddress,
+        contractInterface: builderABI,
+        functionName: 'getNextLevelTimeRequirement',
+        args: [cityBuildingLevels, buildingId],
+        cacheTime: 30_000_000,
+    })
+
+    const buildingTimeRequirements = data !== undefined ? data : 0;
+
+    return {buildingTimeRequirements, isLoading, isError}
+
+}
+
+export const useGetAllBuildingRequirements = (cityBuildingLevels: number[]) => {
+    interface IRequirementsQuery {
+        addressOrName: string
+        contractInterface: any
+        functionName: string
+        args: any[]
+    }
+    function setupContractQuery(buildings: number[]) {
+        const contractQuery: IRequirementsQuery[] = [];
+        const queries = ['checkBuildingRequirementsMet', 'getCostOfNextLevel', 'getNextLevelTimeRequirement']
+
+        buildings.forEach((b, i) => {
+            queries.forEach(query => {
+                contractQuery.push({
+                    addressOrName: builderAddress,
+                    contractInterface: builderABI,
+                    functionName: query,
+                    args: [buildings, i]
+                })
+            })
+        })
+
+        return contractQuery;
+    }
+
+    const contractQueries = setupContractQuery(cityBuildingLevels)
+
+    const { data, isLoading, isError, error, status } = useContractReads({
+        contracts: contractQueries,
+        cacheTime: 30_000,
+    })
+
+    return {data, isLoading}
 
 }

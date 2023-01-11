@@ -26,6 +26,7 @@ button:disabled {
 }
 
 input {
-  padding: .1rem;
+  padding: .1rem .25rem;
   border-radius: .25rem;
+  color: black;
 }

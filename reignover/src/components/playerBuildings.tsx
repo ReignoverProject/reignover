@@ -1,34 +1,23 @@
 import { useState, useEffect } from "react"
-import { useAccount } from "wagmi"
-import { useGetBuildingLevels, useGetOwnerCityId } from "../utils/hooks/useGetBuildings"
+import { useGetAllBuildingRequirements, useGetBuildingLevels, useGetOwnerCityId } from "../utils/hooks/useGetBuildings"
+import { builderAddress, buildings } from "../utils/constants"
 import { IPlayerBuilding } from "../utils/types/playerInfo"
-import { buildings } from "../utils/constants"
+import { useContractReads } from "wagmi"
+import { builderABI } from "../utils/abis/Builder"
+import { BuildingDetails } from "./buildingDetails"
 
 interface IPlayerBuildings {
-    address: string
     cityId: number
 }
 
-export const PlayerBuildings: React.FC<IPlayerBuildings> = ({address, cityId}) => {
-    const buildingLevels = useGetBuildingLevels(cityId)
 
+export const PlayerBuildings: React.FC<IPlayerBuildings> = ({cityId}) => {
+    const {buildingLevels, isLoading, isSuccess} = useGetBuildingLevels(cityId)
+
+    if (buildingLevels === undefined) return <>loading...</>
     return (
-        <div>
-            {
-                buildings.map((building, i) => {
-                    return (
-                        <div key={i}>
-                            <div>
-                                {building.name}
-                            </div>
-                            <div>
-                                {buildingLevels[i]}
-                            </div>
-                            {/* {building.isUnderConstruction && <div>Under Construction!</div>} */}
-                        </div>
-                    )
-                })
-            }
+        <div className="w-full px-4">
+            {isSuccess && <BuildingDetails buildingLevels={buildingLevels.map(Number)} cityId={cityId} />}
         </div>
     )
 }

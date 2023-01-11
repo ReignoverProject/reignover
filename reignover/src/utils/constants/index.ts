@@ -31,30 +31,35 @@ export const buildings = [
     name: "Capitol",
     lvlReq: [0],
     resReq: [0, 100, 100, 0, 0],
-    maxLvl: 100
+    maxLvl: 100,
+    description: "The Capitol is your seat of power and is required to expand the city."  
   },
   {
     name: "Forester Hut",
     lvlReq: [1, 0],
     resReq: [0, 100, 0, 0, 0],
-    maxLvl: 100 
+    maxLvl: 100,
+    description: "Generate wood for the city."
   },
   {
     name: "Stone Quarry",
     lvlReq: [1,1,0],
     resReq: [0, 100, 60, 0, 0],
-    maxLvl: 100 
+    maxLvl: 100,
+    description: "Generates stone for the city."  
   },
   {
     name: "Iron Mine",
     lvlReq: [1,1,1,0],
     resReq: [0, 100, 60, 60, 0],
-    maxLvl: 100
+    maxLvl: 100,
+    description: "Generates iron for the city."
   },
   {
     name: "Farm",
     lvlReq: [1,1,1,1,0],
     resReq: [0, 100, 60, 60, 60],
-    maxLvl: 100 
+    maxLvl: 100,
+    description: "Generates food for the city."  
   },
 ];
