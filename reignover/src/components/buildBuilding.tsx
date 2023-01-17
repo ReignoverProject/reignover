@@ -5,9 +5,10 @@ import { builderAddress } from "../utils/constants"
 interface IBuildBuilding {
     cityId: number
     buildingId: number
+    refetch: () => Promise<any>
 }
 
-export const BuildBuilding: React.FC<IBuildBuilding> = ({cityId, buildingId}) => {
+export const PrepBuilding: React.FC<IBuildBuilding> = ({cityId, buildingId, refetch}) => {
     
     const { config } = usePrepareContractWrite({
         addressOrName: builderAddress,
@@ -22,8 +23,29 @@ export const BuildBuilding: React.FC<IBuildBuilding> = ({cityId, buildingId}) =>
     }
 
     return (
-        <button disabled={isLoading}>
+        <button disabled={isLoading} onClick={handleUpgrade}>
             Upgrade
+        </button>
+    )
+}
+
+export const CompleteBuilding: React.FC<IBuildBuilding> = ({cityId, buildingId, refetch}) => {
+    
+    const { config } = usePrepareContractWrite({
+        addressOrName: builderAddress,
+        contractInterface: builderABI,
+        functionName: 'completeLevelUpBuilding',
+        args: [cityId, buildingId],
+    })
+    const { data, isLoading, isSuccess, write, isError } = useContractWrite(config)
+
+    const handleUpgrade = () => {
+        write?.()
+    }
+
+    return (
+        <button disabled={isLoading} onClick={handleUpgrade}>
+            Complete Upgrade
         </button>
     )
 }

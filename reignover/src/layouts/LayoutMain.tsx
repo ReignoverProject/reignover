@@ -11,7 +11,7 @@ export const LayoutMain: React.FC<{children: React.ReactNode}> = ({children}) =>
             <meta name="description" content="City-building strategy game" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
-        <main className="flex min-h-screen flex-col bg-gradient-to-t from-[#3e3e3e] to-[#1a1a1a] p-2">
+        <main className="flex min-h-screen flex-col bg-gradient-to-t from-[#3e3e3e] to-[#1a1a1a] p-2 relative">
             <NavBar />
             {children}
         </main>

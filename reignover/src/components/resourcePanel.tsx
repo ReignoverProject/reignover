@@ -1,6 +1,4 @@
-import { useAccount, useContractReads } from "wagmi"
-import { resourcesABI } from "../utils/abis/Resources"
-import { resourcesAddress, resourceTokens } from "../utils/constants"
+import { resourceTokens } from "../utils/constants"
 import { useGetResources } from "../utils/hooks/useGetResources"
 
 interface IResourcePanel {
@@ -17,7 +15,7 @@ export const ResourcePanel: React.FC<IResourcePanel> = ({address}) => {
             <p className="font-semibold text-lg">Resources</p>
             {resourceTokens.map((token, i) => {
                 return (
-                    <div className="flex flex-row justify-between gap-2">
+                    <div key={i} className="flex flex-row justify-between gap-2">
                         <p>
                             {token.symbol}:
                         </p>

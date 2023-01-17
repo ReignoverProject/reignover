@@ -5,19 +5,26 @@ import { IPlayerBuilding } from "../utils/types/playerInfo"
 import { useContractReads } from "wagmi"
 import { builderABI } from "../utils/abis/Builder"
 import { BuildingDetails } from "./buildingDetails"
+import useRefresh from "../utils/useRefresh"
 
 interface IPlayerBuildings {
     cityId: number
+    account: string
 }
 
 
-export const PlayerBuildings: React.FC<IPlayerBuildings> = ({cityId}) => {
-    const {buildingLevels, isLoading, isSuccess} = useGetBuildingLevels(cityId)
+export const PlayerBuildings: React.FC<IPlayerBuildings> = ({cityId, account}) => {
+    const {buildingLevels, isLoading, isSuccess, refetchLevels} = useGetBuildingLevels(cityId)
+    const {fastRefresh, slowRefresh} = useRefresh()
+    
+    useEffect(() => {
+        refetchLevels()
+    }, [fastRefresh])
 
     if (buildingLevels === undefined) return <>loading...</>
     return (
         <div className="w-full px-4">
-            {isSuccess && <BuildingDetails buildingLevels={buildingLevels.map(Number)} cityId={cityId} />}
+            {isSuccess && <BuildingDetails account={account} buildingLevels={buildingLevels.map(Number)} cityId={cityId} />}
         </div>
     )
 }

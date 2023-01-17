@@ -1,9 +1,15 @@
+import { useRouter } from "next/router"
 import { useRef, useState } from "react"
 import { useContractWrite, usePrepareContractWrite } from "wagmi"
 import { kingdomsABI } from "../utils/abis/Kingdoms"
 import { kingdomAddress } from "../utils/constants"
 
-export const CreateCity: React.FC = () => {
+interface ICreateCity {
+    setHasCity: (hasCity: boolean) => void
+}
+
+export const CreateCity: React.FC<ICreateCity> = ({setHasCity}) => {
+    const router = useRouter()
     const [args, setArgs] = useState<string[]>()
     const { config } = usePrepareContractWrite({
         addressOrName: kingdomAddress,
@@ -11,7 +17,7 @@ export const CreateCity: React.FC = () => {
         functionName: 'buildCity',
         args: args,
     })
-    const { data, isLoading, isSuccess, write, isError } = useContractWrite(config)
+    const { data, isLoading, isSuccess, write, isError } = useContractWrite({...config, onSuccess(){setHasCity(true)}})
 
     const handleCreate = () => {
         //console.log(name)

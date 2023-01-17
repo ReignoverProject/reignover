@@ -5,5 +5,6 @@ export interface IPlayerBuilding {
     levelRequirements: boolean[] | any
     timeRequirements: number
     resourceRequirements: number[]
-    isUnderConstruction: boolean
+    hasResources: boolean[]
+    constructionTime: number
 }

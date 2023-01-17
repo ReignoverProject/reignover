@@ -1,4 +1,4 @@
-import { useAccount, useContractReads } from "wagmi"
+import { useAccount, useContractRead, useContractReads } from "wagmi"
 import { resourcesABI } from "../abis/Resources"
 import { resourcesAddress } from "../constants"
 
@@ -42,4 +42,19 @@ export const useGetResources= (address: string) => {
     const resourceAmounts = data?.map(bn => Number(bn))
 
     return { resourceAmounts, isLoading, isError, error, status }
+}
+
+export const useGetApprovalSatus = (account: string, operator: string) => {
+    const {data, isLoading, isError, error} = useContractRead({
+        addressOrName: resourcesAddress,
+        contractInterface: resourcesABI,
+        functionName: 'isApprovedForAll',
+        args: [account, operator],
+        cacheTime: 30_000_000,
+    })
+
+    const isBuilderApproved = data
+    const approvalCheckLoading = isLoading
+
+    return {isBuilderApproved, approvalCheckLoading}
 }

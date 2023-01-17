@@ -1,8 +1,12 @@
 
 import { type NextPage } from "next";
 import { StartGame } from "../components/startGame";
+import { TestStuff } from "../components/testingstuff";
+import useRefresh from "../utils/useRefresh";
 
 const Home: NextPage = () => {
+  const {fastRefresh, slowRefresh} = useRefresh()
+
   return (
     <div className="flex-col flex items-center">
       <div>

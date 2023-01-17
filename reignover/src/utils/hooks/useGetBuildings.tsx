@@ -1,7 +1,8 @@
 import { useContractRead, useContractReads } from "wagmi"
 import { builderABI } from "../abis/Builder"
 import { kingdomsABI } from "../abis/Kingdoms"
-import { builderAddress, kingdomAddress } from "../constants"
+import { builderAddress, buildings, kingdomAddress } from "../constants"
+import { IRequirementsQuery } from "../types/contractTypes"
 import { IPlayerBuilding } from "../types/playerInfo"
 
 export const useGetBuildingsList = () => {
@@ -9,7 +10,7 @@ export const useGetBuildingsList = () => {
         addressOrName: builderAddress,
         contractInterface: builderABI,
         functionName: 'getBuildings',
-        cacheTime: 30_000_000,
+        cacheTime: 30_000,
     })
 
     const buildingList = data;
@@ -24,7 +25,7 @@ export const useGetOwnerCityId = (account: string) => {
         contractInterface: kingdomsABI,
         functionName: 'getOwnerCities',
         args: [account],
-        cacheTime: 30_000_000,
+        cacheTime: 30_000,
     })
     if(isError) {console.log('get city id error: ', error)}
     //console.log('address, city ids', account, data, isSuccess)
@@ -36,17 +37,19 @@ export const useGetOwnerCityId = (account: string) => {
 
 export const useGetBuildingLevels = (cityId: number) => {     
 
-    const {data, isLoading, isError, error, isSuccess} = useContractRead({
+    const {data, isLoading, isError, error, isSuccess, refetch} = useContractRead({
         addressOrName: kingdomAddress,
         contractInterface: kingdomsABI,
         functionName: 'getCityBuildingsWithLevel',
         args: [cityId],
-        cacheTime: 30_000_000,
+        cacheTime: 1_000,
     })
+    console.log('usegetbuildinglevels:', data)
 
     const buildingLevels = data
+    const refetchLevels = refetch
 
-    return {buildingLevels, isLoading, isSuccess}
+    return {buildingLevels, isLoading, isSuccess, refetchLevels}
 
 }
 
@@ -56,7 +59,7 @@ export const useCheckBuildingLevelRequirements = (cityBuildingLevels: number[], 
         contractInterface: builderABI,
         functionName: 'checkBuildingRequirementsMet',
         args: [cityBuildingLevels, buildingId],
-        cacheTime: 30_000_000,
+        cacheTime: 30_000,
     })
 
     const canBuild = data !== undefined ? data[0] : false;
@@ -72,7 +75,7 @@ export const useCheckBuildingResourceRequirements = (cityBuildingLevels: number[
         contractInterface: builderABI,
         functionName: 'getCostOfNextLevel',
         args: [cityBuildingLevels, buildingId],
-        cacheTime: 30_000_000,
+        cacheTime: 30_000,
     })
 
     const buildingResourceRequirements = data !== undefined ? data : [0];
@@ -87,7 +90,7 @@ export const useCheckBuildingTimeRequirements = (cityBuildingLevels: number[], b
         contractInterface: builderABI,
         functionName: 'getNextLevelTimeRequirement',
         args: [cityBuildingLevels, buildingId],
-        cacheTime: 30_000_000,
+        cacheTime: 30_000,
     })
 
     const buildingTimeRequirements = data !== undefined ? data : 0;
@@ -97,12 +100,7 @@ export const useCheckBuildingTimeRequirements = (cityBuildingLevels: number[], b
 }
 
 export const useGetAllBuildingRequirements = (cityBuildingLevels: number[]) => {
-    interface IRequirementsQuery {
-        addressOrName: string
-        contractInterface: any
-        functionName: string
-        args: any[]
-    }
+
     function setupContractQuery(buildings: number[]) {
         const contractQuery: IRequirementsQuery[] = [];
         const queries = ['checkBuildingRequirementsMet', 'getCostOfNextLevel', 'getNextLevelTimeRequirement']
@@ -123,11 +121,42 @@ export const useGetAllBuildingRequirements = (cityBuildingLevels: number[]) => {
 
     const contractQueries = setupContractQuery(cityBuildingLevels)
 
-    const { data, isLoading, isError, error, status } = useContractReads({
+    const { data, isLoading, isError, error, status, refetch } = useContractReads({
         contracts: contractQueries,
-        cacheTime: 30_000,
+        cacheTime: 3_000,
     })
 
-    return {data, isLoading}
+    return {data, isLoading, refetch}
 
+}
+
+export const useGetBuildingQueue = (address: string, cityId: number) => {
+
+    function setupContractQuery(buildings: number) {
+        const contractQuery: IRequirementsQuery[] = [];
+
+        for (let i = 0; i < buildings; i++) {
+            contractQuery.push({
+                addressOrName: builderAddress,
+                contractInterface: builderABI,
+                functionName: 'buildingQueue',
+                args: [address, cityId, i]
+            })
+        }       
+        
+        return contractQuery;
+    }
+
+    const contractQueries = setupContractQuery(buildings.length)
+
+    const { data, isLoading, isError, error, status, refetch } = useContractReads({
+        contracts: contractQueries,
+        cacheTime: 3_000,
+    })
+
+    const buildTime = data !== undefined ? data.map(Number) : [0,0,0,0,0]
+    const queueLoading = isLoading
+    const queueRefetch = refetch
+
+    return {buildTime, queueLoading, queueRefetch}
 }
