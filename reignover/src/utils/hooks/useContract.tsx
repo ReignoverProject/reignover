@@ -2,8 +2,8 @@ import { useContractRead, useContractWrite, usePrepareContractWrite } from "wagm
 
 export const useContractWriter = (contractAddress: string, abi: object[], functionSelector: string) => {
   const { config } = usePrepareContractWrite({
-    addressOrName: contractAddress,
-    contractInterface: abi,
+    address: contractAddress,
+    abi: abi,
     functionName: functionSelector,
   })
   const { data, isLoading, isSuccess, write } = useContractWrite(config)
@@ -13,8 +13,8 @@ export const useContractWriter = (contractAddress: string, abi: object[], functi
 
 export const useContractReader = (contractAddress: string, abi: object[], functionSelector: string, args: string[]) => {
   const { data, isError, isLoading } = useContractRead({
-    addressOrName: contractAddress,
-    contractInterface: abi,
+    address: contractAddress,
+    abi: abi,
     functionName: functionSelector,
     args: args,
   })

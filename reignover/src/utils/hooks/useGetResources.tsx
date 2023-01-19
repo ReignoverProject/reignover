@@ -7,32 +7,32 @@ export const useGetResources= (address: string) => {
     const { data, isLoading, isError, error, status } = useContractReads({
         contracts: [
             {
-                addressOrName: resourcesAddress,
-                contractInterface: resourcesABI,
+                address: resourcesAddress,
+                abi: resourcesABI,
                 functionName: 'balanceOf',
                 args: [address, 0],
             },
             {
-                addressOrName: resourcesAddress,
-                contractInterface: resourcesABI,
+                address: resourcesAddress,
+                abi: resourcesABI,
                 functionName: 'balanceOf',
                 args: [address, 1],
             },
             {
-                addressOrName: resourcesAddress,
-                contractInterface: resourcesABI,
+                address: resourcesAddress,
+                abi: resourcesABI,
                 functionName: 'balanceOf',
                 args: [address, 2],
             },
             {
-                addressOrName: resourcesAddress,
-                contractInterface: resourcesABI,
+                address: resourcesAddress,
+                abi: resourcesABI,
                 functionName: 'balanceOf',
                 args: [address, 3],
             },
             {
-                addressOrName: resourcesAddress,
-                contractInterface: resourcesABI,
+                address: resourcesAddress,
+                abi: resourcesABI,
                 functionName: 'balanceOf',
                 args: [address, 4],
             },
@@ -46,8 +46,8 @@ export const useGetResources= (address: string) => {
 
 export const useGetApprovalSatus = (account: string, operator: string) => {
     const {data, isLoading, isError, error} = useContractRead({
-        addressOrName: resourcesAddress,
-        contractInterface: resourcesABI,
+        address: resourcesAddress,
+        abi: resourcesABI,
         functionName: 'isApprovedForAll',
         args: [account, operator],
         cacheTime: 30_000_000,

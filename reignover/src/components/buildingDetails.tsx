@@ -8,7 +8,7 @@ import { CompleteBuilding, PrepBuilding } from "./buildBuilding"
 import { Countdown } from "./countdown"
 
 interface IBuildingDetails {
-    account: string
+    account: `0x${string}`
     buildingLevels: number[]
     cityId: number
 }

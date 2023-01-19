@@ -8,16 +8,16 @@ interface ICreateCity {
     setHasCity: (hasCity: boolean) => void
 }
 
-export const CreateCity: React.FC<ICreateCity> = ({setHasCity}) => {
+export const CreateCity: React.FC = () => {
     const router = useRouter()
     const [args, setArgs] = useState<string[]>()
     const { config } = usePrepareContractWrite({
-        addressOrName: kingdomAddress,
-        contractInterface: kingdomsABI,
+        address: kingdomAddress,
+        abi: kingdomsABI,
         functionName: 'buildCity',
         args: args,
     })
-    const { data, isLoading, isSuccess, write, isError } = useContractWrite({...config, onSuccess(){setHasCity(true)}})
+    const { data, isLoading, isSuccess, write, isError } = useContractWrite({...config})
 
     const handleCreate = () => {
         //console.log(name)

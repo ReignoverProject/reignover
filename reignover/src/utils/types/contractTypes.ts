@@ -1,6 +1,6 @@
 export interface IRequirementsQuery {
-    addressOrName: string
-    contractInterface: any
+    address: `0x${string}`
+    abi: any
     functionName: string
     args: any[]
 }

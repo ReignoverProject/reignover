@@ -16,23 +16,27 @@ import { useGetApprovalSatus } from "../../utils/hooks/useGetResources";
 const Kingdom: NextPage = () => {
     const { address } = useAccount();
     
-    const id = useGetOwnerCityId(address!)
-    const [showModal, setShowModal] = useState(false)
-    const [hasCity, setHasCity] = useState(id !== undefined)
+    const cityId = useGetOwnerCityId(address!)
+    const id = Number(cityId.data)
+    console.log('cityId, id', cityId, id)
+    const hasCity = cityId.data?.length > 0
+    const [showApprovalModal, setShowApprovalModal] = useState(false)
+    // const [hasCity, setHasCity] = useState(id !== undefined)
     const {isBuilderApproved, approvalCheckLoading} = useGetApprovalSatus(address!, builderAddress)
     const { config } = usePrepareContractWrite({
-        addressOrName: resourcesAddress,
-        contractInterface: resourcesABI,
+        address: resourcesAddress,
+        abi: resourcesABI,
         functionName: 'setApprovalForAll',
         args: [builderAddress, true],
     })
-    const { data, isLoading, isSuccess, write, isError } = useContractWrite({...config, onSuccess(){setShowModal(false)}})
+    const { data, isLoading, isSuccess, write, isError } = useContractWrite({...config, onSuccess(){setShowApprovalModal(false);console.log('Yay, builders can work!')}})
 
     const handleApprove = () => {
         write?.()
     }
     useEffect(() => {
-        !approvalCheckLoading && !isBuilderApproved && setShowModal(true)
+        !approvalCheckLoading && !isBuilderApproved && setShowApprovalModal(true)
+        isBuilderApproved && setShowApprovalModal(false)
     }, [isBuilderApproved])
 
 
@@ -44,12 +48,12 @@ const Kingdom: NextPage = () => {
                     <ResourcePanel address={address!} />
                     <div className="flex justify-center  w-full p-2 border rounded border-gray-200">
                         {!hasCity 
-                            ? <CreateCity setHasCity={setHasCity} /> 
-                            : <PlayerBuildings account={address!} cityId={id!} />
+                            ? <CreateCity /> 
+                            : <PlayerBuildings account={address!} cityId={Number(id)} />
                         }
                     </div>
-                    {showModal &&
-                        <Modal setShowModal={setShowModal}>
+                    {showApprovalModal &&
+                        <Modal setShowModal={setShowApprovalModal}>
                             <p className="text-lg font-bold ">
                                 Welcome to Reignover!
                             </p>
