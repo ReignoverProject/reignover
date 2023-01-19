@@ -11,8 +11,8 @@ interface IBuildBuilding {
 export const PrepBuilding: React.FC<IBuildBuilding> = ({cityId, buildingId, refetch}) => {
     
     const { config } = usePrepareContractWrite({
-        addressOrName: builderAddress,
-        contractInterface: builderABI,
+        address: builderAddress,
+        abi: builderABI,
         functionName: 'prepLevelUpBuilding',
         args: [cityId, buildingId],
     })
@@ -32,8 +32,8 @@ export const PrepBuilding: React.FC<IBuildBuilding> = ({cityId, buildingId, refe
 export const CompleteBuilding: React.FC<IBuildBuilding> = ({cityId, buildingId, refetch}) => {
     
     const { config } = usePrepareContractWrite({
-        addressOrName: builderAddress,
-        contractInterface: builderABI,
+        address: builderAddress,
+        abi: builderABI,
         functionName: 'completeLevelUpBuilding',
         args: [cityId, buildingId],
     })

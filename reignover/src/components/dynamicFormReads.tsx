@@ -6,7 +6,7 @@ interface IDynamicForm {
   inputs: AbiInput[];
   name: string;
   buttonName: string;
-  contractAddress: string;
+  contractAddress: `0x${string}`;
   ABI: AbiItem[] | any;
 }
 
@@ -15,8 +15,8 @@ export const Dynamicform: React.FC<IDynamicForm> = ({ inputs, name, buttonName, 
   const [inputFields, setInputFields] = useState<Record<string, string>>(inputstate)
   const [args, setArgs] = useState<string[]>()
   const { data, isLoading, isRefetching, isSuccess, refetch, isError, error } = useContractRead({
-      addressOrName: contractAddress,
-      contractInterface: ABI,
+      address: contractAddress,
+      abi: ABI,
       functionName: name,
       args: args,
       cacheTime: 30_000,

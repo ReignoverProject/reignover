@@ -14,6 +14,7 @@ const Home: NextPage = () => {
       </div>
       <div className="justify-center content-center items-center">
         <StartGame />
+        {/* <TestStuff /> */}
       </div>
     </div>
   );
