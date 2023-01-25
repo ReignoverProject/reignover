@@ -34,12 +34,17 @@ contract Builder is Editor {
     // wallet > cityId > buildingId > time until ready
     mapping(address => mapping(uint => mapping(uint => uint))) public buildingQueue; 
 
+    // Admin Events
     event NewBuildingLevelRequirements(uint indexed buildingId, uint[] levelRequirements);
     event NewBuildingResourceRequirements(uint indexed buildingId, uint[] resourceRequirements);
     event NewBuildingMaxLevel(uint indexed buildingId, uint maxLevel);
     event BuildingCreated(uint buildingId, string buildingName);
     event NewBuildingName(uint indexed buildingId, string newBuildingName);
     event NewKingdomsContract(address newContract);
+
+    // User Events
+    event StartBuildingUpgrade(uint indexed cityId, uint indexed buildingId, uint completionTime);
+    event CompleteBuildingUpgrade(uint indexed cityId, uint indexed buildingId, uint newLevel);
 
     /** 
         @notice creates a new building for cities
@@ -165,6 +170,7 @@ contract Builder is Editor {
         }
         uint timeCost = getNextLevelTimeRequirement(cityBuildingLevels, _buildingId);
         buildingQueue[msg.sender][_cityId][_buildingId] = block.timestamp + timeCost;
+        emit StartBuildingUpgrade(_cityId, _buildingId, buildingQueue[msg.sender][_cityId][_buildingId]);
     }
 
     /** @notice levels up the building, collects resources for that city and updates the level in the resource manager */
@@ -177,6 +183,7 @@ contract Builder is Editor {
         Kingdoms.updateBuilding(_cityId, _buildingId, newLevel); 
         buildingQueue[msg.sender][_cityId][_buildingId] = 0;
         ResourceManager.setBuildingLevel(_cityId, _buildingId);
+        emit CompleteBuildingUpgrade(_cityId, _buildingId, newLevel);
     }
 
     // Next three functions help calculate for building the next level building. They all have the same issue where a user could put in any info externally and get the wrong result
