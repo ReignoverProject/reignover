@@ -1,10 +1,12 @@
+import { BigNumber } from "ethers"
 import { useAccount, useContractRead, useContractReads } from "wagmi"
+import { resourceManagerABI } from "../abis/ResourceManager"
 import { resourcesABI } from "../abis/Resources"
-import { resourcesAddress } from "../constants"
+import { resourceManagerAddress, resourcesAddress } from "../constants"
 
 export const useGetResources= (address: string) => {
 
-    const { data, isLoading, isError, error, status } = useContractReads({
+    const { data, isLoading, isError, error, status, refetch } = useContractReads({
         contracts: [
             {
                 address: resourcesAddress,
@@ -37,15 +39,15 @@ export const useGetResources= (address: string) => {
                 args: [address, 4],
             },
         ],
-        cacheTime: 30_000,
+        cacheTime: 300,
     })
     const resourceAmounts = data?.map(bn => Number(bn))
 
-    return { resourceAmounts, isLoading, isError, error, status }
+    return { resourceAmounts, isLoading, isError, error, status, refetch }
 }
 
 export const useGetApprovalSatus = (account: string, operator: string) => {
-    const {data, isLoading, isError, error} = useContractRead({
+    const {data, isLoading, isError, error, refetch} = useContractRead({
         address: resourcesAddress,
         abi: resourcesABI,
         functionName: 'isApprovedForAll',
@@ -56,5 +58,20 @@ export const useGetApprovalSatus = (account: string, operator: string) => {
     const isBuilderApproved = data
     const approvalCheckLoading = isLoading
 
-    return {isBuilderApproved, approvalCheckLoading}
+    return {isBuilderApproved, approvalCheckLoading, refetch}
+}
+
+export const useGetPendingResources = (cityId: Number) => {
+    
+    const {data, isLoading, isError, error, refetch} = useContractRead({
+        address: resourceManagerAddress,
+        abi: resourceManagerABI,
+        functionName: 'getPendingCityRewards',
+        args: [cityId],
+        cacheTime: 300,
+    })
+
+    const rewards: BigNumber[] | any = data
+
+    return {rewards, isLoading, isError, error, refetch} 
 }

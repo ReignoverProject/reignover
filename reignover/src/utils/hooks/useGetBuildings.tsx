@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers"
 import { useContractRead, useContractReads } from "wagmi"
 import { builderABI } from "../abis/Builder"
 import { kingdomsABI } from "../abis/Kingdoms"
@@ -44,9 +45,8 @@ export const useGetBuildingLevels = (cityId: number) => {
         args: [cityId],
         cacheTime: 1_000,
     })
-    // console.log('usegetbuildinglevels:', data)
 
-    const buildingLevels = data
+    const buildingLevels: number[] = (data as BigNumber[]).map(Number)
     const refetchLevels = refetch
 
     return {buildingLevels, isLoading, isSuccess, refetchLevels}

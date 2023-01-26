@@ -2,29 +2,44 @@ import { useState, useEffect } from "react"
 import { useGetAllBuildingRequirements, useGetBuildingLevels, useGetOwnerCityId } from "../utils/hooks/useGetBuildings"
 import { builderAddress, buildings } from "../utils/constants"
 import { IPlayerBuilding } from "../utils/types/playerInfo"
-import { useContractReads } from "wagmi"
+import { useContractEvent, useContractReads } from "wagmi"
 import { builderABI } from "../utils/abis/Builder"
 import { BuildingDetails } from "./buildingDetails"
 import useRefresh from "../utils/useRefresh"
 
 interface IPlayerBuildings {
     cityId: number
-    account: string
+    account: Address
 }
 
 
 export const PlayerBuildings: React.FC<IPlayerBuildings> = ({cityId, account}) => {
     const {buildingLevels, isLoading, isSuccess, refetchLevels} = useGetBuildingLevels(cityId)
     const {fastRefresh, slowRefresh} = useRefresh()
-    
-    useEffect(() => {
-        refetchLevels()
-    }, [fastRefresh])
+    const myCityId = cityId
 
-    if (buildingLevels === undefined) return <>loading...</>
+    // check events for completing new buildings -> refetch
+    useContractEvent({
+        address: builderAddress,
+        abi: builderABI,
+        eventName: 'CompleteBuildingUpgrade',
+        listener(cityId, buildingId, newLevel) {
+            if(Number(cityId) === myCityId) {
+                refetchLevels()
+                console.log("One of your buildings has completed upgrading!")
+            }
+        }
+    })
+    
+    
+    // useEffect(() => {
+    //     refetchLevels()
+    // }, [fastRefresh])
+
+    if (buildingLevels === undefined || buildingLevels === null) return <>loading...</>
     return (
         <div className="w-full px-4">
-            {isSuccess && <BuildingDetails account={account} buildingLevels={buildingLevels.map(Number)} cityId={cityId} />}
+            {isSuccess && <BuildingDetails account={account} buildingLevels={buildingLevels} cityId={cityId} />}
         </div>
     )
 }

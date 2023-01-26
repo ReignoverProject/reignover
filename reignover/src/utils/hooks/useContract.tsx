@@ -1,6 +1,6 @@
 import { useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi"
 
-export const useContractWriter = (contractAddress: string, abi: object[], functionSelector: string) => {
+export const useContractWriter = (contractAddress: `0x${string}`, abi: object[], functionSelector: string) => {
   const { config } = usePrepareContractWrite({
     address: contractAddress,
     abi: abi,
@@ -11,7 +11,7 @@ export const useContractWriter = (contractAddress: string, abi: object[], functi
   return { data, isLoading, isSuccess, write }
 }
 
-export const useContractReader = (contractAddress: string, abi: object[], functionSelector: string, args: string[]) => {
+export const useContractReader = (contractAddress: `0x${string}`, abi: object[], functionSelector: string, args: string[]) => {
   const { data, isError, isLoading } = useContractRead({
     address: contractAddress,
     abi: abi,

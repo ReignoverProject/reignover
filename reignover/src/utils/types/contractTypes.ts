@@ -4,3 +4,4 @@ export interface IRequirementsQuery {
     functionName: string
     args: any[]
 }
+

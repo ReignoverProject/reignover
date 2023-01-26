@@ -9,22 +9,22 @@ const rewardPools = [
   {
     buildingId: 1,
     rewardToken: 1,
-    baseReward: 1
+    baseReward: 100000
   },
   {
     buildingId: 2,
     rewardToken: 2,
-    baseReward: 1
+    baseReward: 100000
   },
   {
     buildingId: 3,
     rewardToken: 3,
-    baseReward: 1
+    baseReward: 100000
   },
   {
     buildingId: 4,
     rewardToken: 4,
-    baseReward: 1
+    baseReward: 100000
   },
 ];
 

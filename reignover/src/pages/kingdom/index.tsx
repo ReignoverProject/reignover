@@ -18,10 +18,10 @@ const Kingdom: NextPage = () => {
     
     const cityId = useGetOwnerCityId(address!)
     const id = Number(cityId.data)
-    console.log('cityId, id', cityId, id)
-    const hasCity = cityId.data?.length > 0
+    //console.log('cityId, id', cityId, id)
+    const [hasCity, setHasCity] = useState((cityId.data as any[]).length > 0)
+    console.log('has a city?', hasCity, cityId.data)
     const [showApprovalModal, setShowApprovalModal] = useState(false)
-    // const [hasCity, setHasCity] = useState(id !== undefined)
     const {isBuilderApproved, approvalCheckLoading} = useGetApprovalSatus(address!, builderAddress)
     const { config } = usePrepareContractWrite({
         address: resourcesAddress,
@@ -45,11 +45,11 @@ const Kingdom: NextPage = () => {
             <ClientOnly>
                 {address === undefined ? <ConnectWalletMsg />
                 : <>
-                    <ResourcePanel address={address!} />
+                    {hasCity && <ResourcePanel address={address!} cityId={id} />}
                     <div className="flex justify-center  w-full p-2 border rounded border-gray-200">
                         {!hasCity 
-                            ? <CreateCity /> 
-                            : <PlayerBuildings account={address!} cityId={Number(id)} />
+                            ? <CreateCity setHasCity={setHasCity} /> 
+                            : <PlayerBuildings account={address!} cityId={id} />
                         }
                     </div>
                     {showApprovalModal &&
