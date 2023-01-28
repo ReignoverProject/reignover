@@ -16,7 +16,6 @@ export const NavBar: React.FC = () => {
                 </Link>
             </div>
             <div className="flex flex-row gap-4">
-                <Link href='/admin'><p>Admin</p></Link>
                 <Link href='/kingdom'><p>Kingdom</p></Link>
             </div>
             <div className=""><ConnectKitButton /></div>

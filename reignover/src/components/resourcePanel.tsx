@@ -6,6 +6,7 @@ import { resourcesABI } from "../utils/abis/Resources"
 import { builderAddress, resourceManagerAddress, resourcesAddress, resourceTokens } from "../utils/constants"
 import { useGetPendingResources, useGetResources } from "../utils/hooks/useGetResources"
 import Image from "next/image"
+import { formatTokenNumber } from "../utils/formatTokenNumber"
 
 interface IResourcePanel {
     cityId: number
@@ -60,14 +61,16 @@ export const ResourcePanel: React.FC<IResourcePanel> = ({address, cityId}) => {
             <p className="font-semibold text-lg">Resources</p>
             {resourceTokens.map((token, i) => {
                 return (
-                    <div className="flex flex-row gap-2">
-                            <Image src={token.icon} alt='resource icon' width={32} height={32} />
-                        <div key={i} className="flex flex-row justify-end gap-2">
+                    <div className="flex flex-row gap-2 items-center">
+                        <div>
+                        <Image src={token.icon} alt='resource icon' width={48} height={48} />
+                        </div>
+                        <div key={i} className="flex flex-col text-right justify-end w-full">
                             <p>
-                                {!resources.isLoading && resources.resourceAmounts !== undefined ? resources.resourceAmounts[i] : resources.isError ? 'error loading' : '...'}
+                                {!resources.isLoading && resources.resourceAmounts !== undefined ? formatTokenNumber(resources.resourceAmounts[i] as number) : resources.isError ? 'error loading' : '...'}
                             </p>
                         {i !== 0 &&
-                            <p>+{!pendingRewards.isLoading && Number(pendingRewards.rewards[i])}</p>
+                            <p>+{!pendingRewards.isLoading && formatTokenNumber(Number(pendingRewards.rewards[i]))}</p>
                         }
                         </div>
                     </div>
