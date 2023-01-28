@@ -19,7 +19,7 @@ const Kingdom: NextPage = () => {
     const cityId = useGetOwnerCityId(address!)
     const id = Number(cityId.data)
     //console.log('cityId, id', cityId, id)
-    const [hasCity, setHasCity] = useState((cityId.data as any[]).length > 0)
+    const [hasCity, setHasCity] = useState(cityId.data !== undefined)
     console.log('has a city?', hasCity, cityId.data)
     const [showApprovalModal, setShowApprovalModal] = useState(false)
     const {isBuilderApproved, approvalCheckLoading} = useGetApprovalSatus(address!, builderAddress)

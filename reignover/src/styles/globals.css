@@ -16,7 +16,8 @@ button {
 
 button:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(50, 60, 74);
+  background: rgb(26,26,26);
+  background: linear-gradient(11deg, rgba(26,26,26,1) 0%, rgba(62,62,62,1) 56%, rgba(26,26,26,1) 100%);
 }
 
 button:disabled {

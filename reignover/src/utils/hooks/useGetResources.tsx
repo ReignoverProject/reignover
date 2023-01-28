@@ -39,7 +39,7 @@ export const useGetResources= (address: string) => {
                 args: [address, 4],
             },
         ],
-        cacheTime: 300,
+        cacheTime:  10_000_000,
     })
     const resourceAmounts = data?.map(bn => Number(bn))
 
@@ -68,7 +68,7 @@ export const useGetPendingResources = (cityId: Number) => {
         abi: resourceManagerABI,
         functionName: 'getPendingCityRewards',
         args: [cityId],
-        cacheTime: 300,
+        cacheTime:  10_000_000,
     })
 
     const rewards: BigNumber[] | any = data

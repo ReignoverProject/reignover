@@ -5,12 +5,13 @@ import { resourceManagerABI } from "../utils/abis/ResourceManager"
 import { resourcesABI } from "../utils/abis/Resources"
 import { builderAddress, resourceManagerAddress, resourcesAddress, resourceTokens } from "../utils/constants"
 import { useGetPendingResources, useGetResources } from "../utils/hooks/useGetResources"
-import useRefresh from "../utils/useRefresh"
+import Image from "next/image"
 
 interface IResourcePanel {
     cityId: number
     address: `0x${string}`
 }
+
 
 export const ResourcePanel: React.FC<IResourcePanel> = ({address, cityId}) => {
     const resources = useGetResources(address)
@@ -59,10 +60,8 @@ export const ResourcePanel: React.FC<IResourcePanel> = ({address, cityId}) => {
             <p className="font-semibold text-lg">Resources</p>
             {resourceTokens.map((token, i) => {
                 return (
-                    <div className="flex flex-col">
-                            <p>
-                                {token.symbol}:
-                            </p>
+                    <div className="flex flex-row gap-2">
+                            <Image src={token.icon} alt='resource icon' width={32} height={32} />
                         <div key={i} className="flex flex-row justify-end gap-2">
                             <p>
                                 {!resources.isLoading && resources.resourceAmounts !== undefined ? resources.resourceAmounts[i] : resources.isError ? 'error loading' : '...'}

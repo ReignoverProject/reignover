@@ -7,22 +7,27 @@ export const resourceTokens = [
     {
       name: "Reignover Gold",
       symbol: "rGold",
+      icon: '/images/resources/treasure.png',
     },
     {
       name: "Reignover Wood",
       symbol: "rWood",
+      icon: '/images/resources/treeSmall.png',
     },
     {
       name: "Reignover Stone",
       symbol: "rStone",
+      icon: '/images/resources/stoneSmall.png',
     },
     {
       name: "Reignover Iron",
       symbol: "rIron",
+      icon: '/images/resources/ironBar.png',
     },
     {
       name: "Reignover Food",
       symbol: "rFood",
+      icon: '/images/resources/grain.png',
     },
   ];
   
@@ -32,34 +37,40 @@ export const buildings = [
     lvlReq: [0],
     resReq: [0, 100, 100, 0, 0],
     maxLvl: 100,
-    description: "The Capitol is your seat of power and is required to expand the city."  
+    description: "The Capitol is your seat of power and is required to expand the city.",
+    icon: '/images/buildings/capitol.png',
   },
   {
     name: "Forester Hut",
     lvlReq: [1, 0],
     resReq: [0, 100, 0, 0, 0],
     maxLvl: 100,
-    description: "Generate wood for the city."
+    description: "Generate wood for the city.",
+    icon: '/images/buildings/forester.png',
   },
   {
     name: "Stone Quarry",
     lvlReq: [1,1,0],
     resReq: [0, 100, 60, 0, 0],
     maxLvl: 100,
-    description: "Generates stone for the city."  
+    description: "Generates stone for the city.",
+    icon: '/images/buildings/quarry.png',
   },
   {
     name: "Iron Mine",
     lvlReq: [1,1,1,0],
     resReq: [0, 100, 60, 60, 0],
     maxLvl: 100,
-    description: "Generates iron for the city."
+    description: "Generates iron for the city.",
+    icon: '/images/buildings/ironMine.png',
   },
   {
     name: "Farm",
     lvlReq: [1,1,1,1,0],
     resReq: [0, 100, 60, 60, 60],
     maxLvl: 100,
-    description: "Generates food for the city."  
+    description: "Generates food for the city.",
+    icon: '/images/buildings/farm.png',  
   },
 ];
+

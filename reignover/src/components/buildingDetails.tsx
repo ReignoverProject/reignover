@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react"
-import { buildings, resourceTokens } from "../utils/constants"
+import Image from "next/image"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useContractEvent } from "wagmi"
+import { builderABI } from "../utils/abis/Builder"
+import { builderAddress, buildings, resourceTokens } from "../utils/constants"
 import { useGetAllBuildingRequirements, useGetBuildingQueue } from "../utils/hooks/useGetBuildings"
 import { useGetResources } from "../utils/hooks/useGetResources"
 import { IPlayerBuilding } from "../utils/types/playerInfo"
@@ -8,19 +11,43 @@ import { CompleteBuilding, PrepBuilding } from "./buildBuilding"
 import { Countdown } from "./countdown"
 
 interface IBuildingDetails {
-    account: `0x${string}`
+    account: Address
     buildingLevels: number[]
     cityId: number
 }
 
 export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLevels, cityId}) => {
-    const {fastRefresh, slowRefresh} = useRefresh()
     const [buildingsDetails, setBuildingsDetails] = useState<IPlayerBuilding[]>([])
     const {data, isLoading, refetch} = useGetAllBuildingRequirements(buildingLevels)
     const {buildTime, queueLoading, queueRefetch} = useGetBuildingQueue(account, cityId)
-    const { resourceAmounts, } = useGetResources(account)
+    // console.log('building time', buildTime)
+    const { resourceAmounts, } = useGetResources(account)    
+    const myCityId = cityId
 
-    //console.log('build time',Date.now(), buildTime.map(time => Date.now() < time*1000))
+    useContractEvent({
+        address: builderAddress,
+        abi: builderABI,
+        eventName: 'StartBuildingUpgrade',
+        listener(cityId, buildingId, completionTime) {
+            if(Number(cityId) === myCityId) {
+                queueRefetch()
+                refetch()
+                console.log("Updating queue and building requirements")
+            }
+        }
+    })
+    useContractEvent({
+        address: builderAddress,
+        abi: builderABI,
+        eventName: 'CompleteBuildingUpgrade',
+        listener(cityId, buildingId, newLevel) {
+            if(Number(cityId) === myCityId) {
+                queueRefetch()
+                refetch()
+                console.log("Upgrade complete")
+            }
+        }
+    })
 
     function checkResourceRequirements (resourceReqs: number[]) {
         const hasResources: boolean[] = []
@@ -32,11 +59,9 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
         }
         return hasResources
     }
-
+    // todo: complete building button isn't going away after successfully leveling up building
     useEffect(() => {
         if (data !== undefined) {
-            refetch()
-            queueRefetch()
             const detailedReqs: IPlayerBuilding[] = []
             let sort = 0;
             for (let i = 0; i < buildings.length; i++) {
@@ -54,7 +79,6 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
                 )
                 sort += 3;
             }
-            //console.log('requirements details: ', detailedReqs)
             setBuildingsDetails(detailedReqs)
         }
     }, [data, buildingLevels])
@@ -65,18 +89,21 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
             {
                 buildings.map((building, i) => {
                     return (
-                        <div key={i} className="flex flex-row justify-between w-full">
-                            <div className="flex-col">
-                                <div className=" text-lg font-semibold">
-                                    <p>{building.name}</p>
-                                </div>
-                                <div className="flex flex-row gap-1">
-                                    <p>Next Level: </p>
-                                    {buildingsDetails[i]?.resourceRequirements.map((req:number, j) => {
-                                        return (
-                                            <p key={j} className={`${!buildingsDetails[i]?.hasResources[j] && `text-red-800`}`}>{resourceTokens[i]?.symbol} {req},</p>
-                                        )
-                                    })}
+                        <div key={i} className="flex flex-row justify-between w-full my-1">
+                            <div className="flex flex-row gap-2 items-center">
+                                <Image src={building.icon} width={64} height={64} alt={building.name} />
+                                <div className="flex-col">
+                                    <div className=" text-lg font-semibold">
+                                        <p>{building.name}</p>
+                                    </div>
+                                    <div className="flex flex-row gap-1">
+                                        <p>Next Level: </p>
+                                        {buildingsDetails[i]?.resourceRequirements.map((req:number, j) => {
+                                            return (
+                                                <p key={j} className={`${!buildingsDetails[i]?.hasResources[j] && `text-red-800`}`}>{resourceTokens[i]?.symbol} {req},</p>
+                                            )
+                                        })}
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex-col">
@@ -85,11 +112,11 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
                                     <p>{buildingsDetails[i]?.level}</p>
                                 </div>
                                 <div>
-                                    {buildingsDetails[i]?.constructionTime! > 0 && buildingsDetails[i]?.constructionTime! > Date.now()
+                                    {!queueLoading && buildTime[i]!*1000 > 0 && buildTime[i]!*1000 > Date.now()
                                     ? <button disabled>
-                                        <Countdown targetTime={buildingsDetails[i]?.constructionTime!} />
+                                        <Countdown targetTime={buildTime[i]!*1000} />
                                     </button> 
-                                    : buildingsDetails[i]?.constructionTime! > 0 && buildingsDetails[i]?.constructionTime! <= Date.now()
+                                    : buildTime[i]!*1000 > 0 && buildTime[i]!*1000 <= Date.now()
                                         ? <CompleteBuilding buildingId={i} cityId={cityId} refetch={refetch} />
                                     : buildingsDetails[i]?.hasResources.includes(false) || !buildingsDetails[i]?.levelRequirements[0] || isLoading
                                         ? <button disabled>Upgrade</button>
@@ -98,7 +125,6 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
                                 </div>
                                 
                             </div>
-                            {/* {building.isUnderConstruction && <div>Under Construction!</div>} */}
                         </div>
                     )
                 })

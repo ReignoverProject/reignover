@@ -11,7 +11,7 @@ export const useGetBuildingsList = () => {
         address: builderAddress,
         abi: builderABI,
         functionName: 'getBuildings',
-        cacheTime: 30_000,
+        cacheTime: 10_000_000,
     })
 
     const buildingList = data;
@@ -26,7 +26,7 @@ export const useGetOwnerCityId = (account: `0x${string}`) => {
         abi: kingdomsABI,
         functionName: 'getOwnerCities',
         args: [account],
-        cacheTime: 3_000,
+        cacheTime: 10_000_000,
     })
     if(isError) {console.log('get city id error: ', error)}
     //console.log('address, city ids', account, data, isSuccess)
@@ -43,10 +43,10 @@ export const useGetBuildingLevels = (cityId: number) => {
         abi: kingdomsABI,
         functionName: 'getCityBuildingsWithLevel',
         args: [cityId],
-        cacheTime: 1_000,
+        cacheTime: 10_000_000,
     })
 
-    const buildingLevels: number[] = (data as BigNumber[]).map(Number)
+    const buildingLevels: number[] | boolean = data !== undefined && (data as BigNumber[]).map(Number)
     const refetchLevels = refetch
 
     return {buildingLevels, isLoading, isSuccess, refetchLevels}
@@ -59,7 +59,7 @@ export const useCheckBuildingLevelRequirements = (cityBuildingLevels: number[], 
         abi: builderABI,
         functionName: 'checkBuildingRequirementsMet',
         args: [cityBuildingLevels, buildingId],
-        cacheTime: 30_000,
+        cacheTime: 10_000_000,
     })
 
     // const canBuild = data !== undefined ? data[0] : false;
@@ -75,7 +75,7 @@ export const useCheckBuildingResourceRequirements = (cityBuildingLevels: number[
         abi: builderABI,
         functionName: 'getCostOfNextLevel',
         args: [cityBuildingLevels, buildingId],
-        cacheTime: 30_000,
+        cacheTime: 10_000_000,
     })
 
     //const buildingResourceRequirements = data !== undefined ? data : [0];
@@ -90,7 +90,7 @@ export const useCheckBuildingTimeRequirements = (cityBuildingLevels: number[], b
         abi: builderABI,
         functionName: 'getNextLevelTimeRequirement',
         args: [cityBuildingLevels, buildingId],
-        cacheTime: 30_000,
+        cacheTime: 10_000_000,
     })
 
     const buildingTimeRequirements = data !== undefined ? data : 0;
@@ -123,7 +123,7 @@ export const useGetAllBuildingRequirements = (cityBuildingLevels: number[]) => {
 
     const { data, isLoading, isError, error, status, refetch } = useContractReads({
         contracts: contractQueries,
-        cacheTime: 3_000,
+        cacheTime: 10_000_000,
     })
 
     return {data, isLoading, refetch}
@@ -151,7 +151,7 @@ export const useGetBuildingQueue = (address: `0x${string}`, cityId: number) => {
 
     const { data, isLoading, isError, error, status, refetch } = useContractReads({
         contracts: contractQueries,
-        cacheTime: 3_000,
+        cacheTime: 10_000_000,
     })
 
     const buildTime = data !== undefined ? data.map(Number) : [0,0,0,0,0]

@@ -15,7 +15,7 @@ interface IPlayerBuildings {
 
 export const PlayerBuildings: React.FC<IPlayerBuildings> = ({cityId, account}) => {
     const {buildingLevels, isLoading, isSuccess, refetchLevels} = useGetBuildingLevels(cityId)
-    const {fastRefresh, slowRefresh} = useRefresh()
+
     const myCityId = cityId
 
     // check events for completing new buildings -> refetch
@@ -30,16 +30,12 @@ export const PlayerBuildings: React.FC<IPlayerBuildings> = ({cityId, account}) =
             }
         }
     })
-    
-    
-    // useEffect(() => {
-    //     refetchLevels()
-    // }, [fastRefresh])
+
 
     if (buildingLevels === undefined || buildingLevels === null) return <>loading...</>
     return (
         <div className="w-full px-4">
-            {isSuccess && <BuildingDetails account={account} buildingLevels={buildingLevels} cityId={cityId} />}
+            {isSuccess && buildingLevels !== false && <BuildingDetails account={account} buildingLevels={buildingLevels} cityId={cityId} />}
         </div>
     )
 }

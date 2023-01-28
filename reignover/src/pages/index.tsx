@@ -5,7 +5,6 @@ import { TestStuff } from "../components/testingstuff";
 import useRefresh from "../utils/useRefresh";
 
 const Home: NextPage = () => {
-  const {fastRefresh, slowRefresh} = useRefresh()
 
   return (
     <div className="flex-col flex items-center">
