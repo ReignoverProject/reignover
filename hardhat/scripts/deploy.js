@@ -86,6 +86,12 @@ const resourceTokens = [
   },
 ];
 
+const units = [
+  {
+    
+  }
+]
+
 async function main() {
   const [deployer, user1, user2] = await ethers.getSigners();
 

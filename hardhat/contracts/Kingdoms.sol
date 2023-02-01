@@ -27,6 +27,7 @@ contract Kingdoms is Editor{
     struct City {
         string name;
         mapping(uint => uint) buildings; // building id to it's level
+        mapping(uint => uint) units; // unit id to quantity
         bool primary;  // if primary, cannot transfer
     }
     City[] public cities; // ID list of cities
@@ -41,6 +42,7 @@ contract Kingdoms is Editor{
     event NewBuildingLevel(uint indexed cityId, uint indexed buildingId, uint previousLevel, uint newLevel);
     event NewBuilderContract(address newContract);
     event NewresourceTokenContract(address newcontract);
+    event UnitQuantityUpdated(uint indexed cityId, uint unitId, uint oldAmount, uint newAmount);
 
     modifier isCityOwner(uint _cityId) {
         require(msg.sender == cityIdToOwner[_cityId]);
@@ -146,6 +148,16 @@ contract Kingdoms is Editor{
         uint prevLevel = cities[_cityId].buildings[_buildingId];
         cities[_cityId].buildings[_buildingId] = _newBuildingLevel;
         emit NewBuildingLevel(_cityId, _buildingId, prevLevel, _newBuildingLevel);
+    }
+
+    function updateUnit(uint _cityId, uint _unitId, uint _quantity, bool isAdding) external onlyEditor {
+        uint oldAmount = cities[_cityId].units[_unitId];
+        if(isAdding) {
+            cities[_cityId].units[_unitId] += _quantity;
+        } else {
+            cities[_cityId].units[_unitId] -= _quantity;
+        }
+        emit UnitQuantityUpdated(_cityId, _unitId, oldAmount, cities[_cityId].units[_unitId]);
     }
 
     function setBuilderContract(address _newContract) external onlyOwner {

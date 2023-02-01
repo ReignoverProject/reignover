@@ -11,4 +11,5 @@ interface IKingdoms {
     function getOwnerCities(address _owner) external view returns(uint[] memory);
     function addResource(address _resourceAddress) external;
     function getTotalForges(address _player) external view returns(uint);
+    function updateUnit(uint _cityId, uint _unitId, uint _quantity, bool isAdding) external;
 }
