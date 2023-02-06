@@ -59,7 +59,53 @@ const buildings = [
     resReq: [0, 100, 60, 60, 60],
     maxLvl: 100 
   },
+  {
+    name: "Barracks",
+    lvlReq: [0,0,0,0,0,0],
+    resReq: [0, 100, 60, 60, 60],
+    maxLvl: 100 
+  },
+  {
+    name: "Stable",
+    lvlReq: [0,0,0,0,0,0,0],
+    resReq: [0, 100, 60, 60, 60],
+    maxLvl: 100 
+  },
+  {
+    name: "Academy",
+    lvlReq: [0,0,0,0,0,0,0,0],
+    resReq: [0, 100, 60, 60, 60],
+    maxLvl: 100 
+  },
 ];
+
+const units = [
+  {
+    name: 'warrior',
+    reqBuilding: 5,
+    maxUnits: 100000,
+    buildingLevelReq: 1,
+    timeCost: 10,
+    resourceReq: [0, 10, 10, 0, 10],
+  },
+  {
+    name: 'horsey',
+    reqBuilding: 6,
+    maxUnits: 100000,
+    buildingLevelReq: 1,
+    timeCost: 20,
+    resourceReq: [0, 0, 0, 30, 30],
+  },
+  {
+    name: 'mage',
+    reqBuilding: 7,
+    maxUnits: 100000,
+    buildingLevelReq: 1,
+    timeCost: 40,
+    resourceReq: [0, 10, 10, 10, 10],
+  },
+];
+
 
 const resourceTokens = [
   {
@@ -94,7 +140,7 @@ describe("Reignover", function () {
     const resources = await hre.ethers.getContractFactory('Resources');
     const resourceContract = await resources.deploy();
     await resourceContract.deployed();
-
+  
     const kingdoms = await hre.ethers.getContractFactory('Kingdoms');
     const kingdomsContract = await kingdoms.deploy();
     await kingdomsContract.deployed();
@@ -107,49 +153,55 @@ describe("Reignover", function () {
     // Kingdoms, resourcemanager, resources for constructor
     const builderContract = await builder.deploy(kingdomsContract.address, resourceManagerContract.address, resourceContract.address);
     await builderContract.deployed();
-
+    
+    const unitManager = await hre.ethers.getContractFactory('UnitManager');
+    // Kingdoms, resourcemanager, resources for constructor
+    const unitsContract = await unitManager.deploy(kingdomsContract.address, resourceManagerContract.address, resourceContract.address);
+    await unitsContract.deployed();
+  
     const ResAdd = resourceContract.address;
     const ResManAdd = resourceManagerContract.address;
     const BuiAdd = builderContract.address;
     const KinAdd = kingdomsContract.address;
+    const UnitAdd = unitsContract.address;
+  
     // Connect contracts to each other
     await resourceContract.addEditor(resourceManagerContract.address);
     await resourceContract.addEditor(deployer.address);
     // await kingdomsContract.addEditor(resourceManagerContract.address);
     await kingdomsContract.addEditor(BuiAdd);
+    await kingdomsContract.addEditor(UnitAdd);
     await kingdomsContract.setBuilderContract(builderContract.address);
     await kingdomsContract.setResourceTokenContract(resourceContract.address);
     await resourceManagerContract.addEditor(builderContract.address);
     await resourceManagerContract.setKingdoms(kingdomsContract.address);
     await resourceManagerContract.setResources(resourceContract.address);
     await resourceManagerContract.setBuilder(BuiAdd);
+    await resourceManagerContract.setUnitManager(UnitAdd);
     await builderContract.addEditor(resourceManagerContract.address);
     await builderContract.addEditor(deployer.address);
-
+    await unitsContract.addEditor(resourceManagerContract.address);
+  
     // Create resources and buildings
-    await resourceManagerContract.createResourceToken(resourceTokens[0].name, resourceTokens[0].symbol);
-    await resourceManagerContract.createResourceToken(resourceTokens[1].name, resourceTokens[1].symbol);
-    await resourceManagerContract.createResourceToken(resourceTokens[2].name, resourceTokens[2].symbol);
-    await resourceManagerContract.createResourceToken(resourceTokens[3].name, resourceTokens[3].symbol);
-    await resourceManagerContract.createResourceToken(resourceTokens[4].name, resourceTokens[4].symbol);
-    // // build this v in to the resource manager function ^
-    // await builderContract.addResource(0);
-    // await builderContract.addResource(1);
-    // await builderContract.addResource(2);
-    // await builderContract.addResource(3);
-    // await builderContract.addResource(4);
+    resourceTokens.forEach(async(token, i) => {
+      await resourceManagerContract.createResourceToken(token.name, token.symbol);
+    })
+  
     //addBuilding(name, levelRequirements[], resourceRequirements[], maxLevel) create objects for these
-    await builderContract.addBuilding(buildings[0].name, buildings[0].lvlReq, buildings[0].resReq, buildings[0].maxLvl);
-    await builderContract.addBuilding(buildings[1].name, buildings[1].lvlReq, buildings[1].resReq, buildings[2].maxLvl);
-    await builderContract.addBuilding(buildings[2].name, buildings[2].lvlReq, buildings[2].resReq, buildings[2].maxLvl);
-    await builderContract.addBuilding(buildings[3].name, buildings[3].lvlReq, buildings[3].resReq, buildings[3].maxLvl);
-    await builderContract.addBuilding(buildings[4].name, buildings[4].lvlReq, buildings[4].resReq, buildings[4].maxLvl);
+    buildings.forEach(async(building) => {
+      await builderContract.addBuilding(building.name, building.lvlReq, building.resReq, building.maxLvl);
+    })
+  
     // Setup reward pools
-    await resourceManagerContract.setRewardPool(rewardPools[0].buildingId, rewardPools[0].rewardToken, rewardPools[0].baseReward);
-    await resourceManagerContract.setRewardPool(rewardPools[1].buildingId, rewardPools[1].rewardToken, rewardPools[1].baseReward);
-    await resourceManagerContract.setRewardPool(rewardPools[2].buildingId, rewardPools[2].rewardToken, rewardPools[2].baseReward);
-    await resourceManagerContract.setRewardPool(rewardPools[3].buildingId, rewardPools[3].rewardToken, rewardPools[3].baseReward);
+    rewardPools.forEach(async(pool) => {
+      await resourceManagerContract.setRewardPool(pool.buildingId, pool.rewardToken, pool.baseReward);
+    })
 
+    //setup units
+    // units.forEach(async(unit) => {
+    //   await unitsContract.addUnit(unit.name, unit.reqBuilding, unit.maxUnits, unit.lvlReq, unit.timeCost, unit.resReq);
+    // })
+  
     // mint tokens to account
     await resourceContract.mint(deployer.address, 0, 10000)
     await resourceContract.mint(deployer.address, 1, 10000)
@@ -157,12 +209,12 @@ describe("Reignover", function () {
     await resourceContract.mint(deployer.address, 3, 10000)
     await resourceContract.mint(deployer.address, 4, 10000)
 
-    return { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, builderContract, ResAdd, ResManAdd, BuiAdd, KinAdd };
+    return { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, unitsContract, builderContract, ResAdd, ResManAdd, BuiAdd, KinAdd };
   }
 
   describe("Setup", function () {
     it("Should set the right editors", async function () {
-      const { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, builderContract, ResAdd, ResManAdd, BuiAdd, KinAdd } = await loadFixture(deployContractsFixture);
+      const { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, unitsContract, builderContract, ResAdd, ResManAdd, BuiAdd, KinAdd } = await loadFixture(deployContractsFixture);
      
       expect(await resourceContract.editor(ResManAdd)).to.equal(true);
       expect(await resourceContract.editor(deployer.address)).to.equal(true);
@@ -170,6 +222,7 @@ describe("Reignover", function () {
       expect(await kingdomsContract.editor(BuiAdd)).to.equal(true);
       expect(await builderContract.editor(ResManAdd)).to.equal(true);
       expect(await builderContract.editor(deployer.address)).to.equal(true);
+      expect(await unitsContract.editor(ResManAdd)).to.equal(true);
 
     });
 
@@ -279,9 +332,155 @@ describe("Reignover", function () {
 
       expect(newLevels[0]).to.equal(1);
     });
+    
+  });
 
+  describe("Unit Manager Contract", () => {
+    // fixture for unit manager testing
+    async function setupUnitManagerFixture() {
+      const [deployer, user1, user2] = await ethers.getSigners();
+  
+      const resources = await hre.ethers.getContractFactory('Resources');
+      const resourceContract = await resources.deploy();
+      await resourceContract.deployed();
+    
+      const kingdoms = await hre.ethers.getContractFactory('Kingdoms');
+      const kingdomsContract = await kingdoms.deploy();
+      await kingdomsContract.deployed();
+      
+      const resourceManager = await hre.ethers.getContractFactory('ResourceManager');
+      const resourceManagerContract = await resourceManager.deploy();
+      await resourceManagerContract.deployed();
+      
+      const builder = await hre.ethers.getContractFactory('Builder');
+      // Kingdoms, resourcemanager, resources for constructor
+      const builderContract = await builder.deploy(kingdomsContract.address, resourceManagerContract.address, resourceContract.address);
+      await builderContract.deployed();
+      
+      const unitManager = await hre.ethers.getContractFactory('UnitManager');
+      // Kingdoms, resourcemanager, resources for constructor
+      const unitsContract = await unitManager.deploy(kingdomsContract.address, resourceManagerContract.address, resourceContract.address);
+      await unitsContract.deployed();
+    
+      const ResAdd = resourceContract.address;
+      const ResManAdd = resourceManagerContract.address;
+      const BuiAdd = builderContract.address;
+      const KinAdd = kingdomsContract.address;
+      const UnitAdd = unitsContract.address;
+    
+      // Connect contracts to each other
+      await resourceContract.addEditor(resourceManagerContract.address);
+      await resourceContract.addEditor(deployer.address);
+      // await kingdomsContract.addEditor(resourceManagerContract.address);
+      await kingdomsContract.addEditor(BuiAdd);
+      await kingdomsContract.addEditor(UnitAdd);
+      await kingdomsContract.setBuilderContract(builderContract.address);
+      await kingdomsContract.setResourceTokenContract(resourceContract.address);
+      await resourceManagerContract.addEditor(builderContract.address);
+      await resourceManagerContract.setKingdoms(kingdomsContract.address);
+      await resourceManagerContract.setResources(resourceContract.address);
+      await resourceManagerContract.setBuilder(BuiAdd);
+      await resourceManagerContract.setUnitManager(UnitAdd);
+      await builderContract.addEditor(resourceManagerContract.address);
+      await builderContract.addEditor(deployer.address);
+      await unitsContract.addEditor(resourceManagerContract.address);
+    
+      // Create resources and buildings
+      resourceTokens.forEach(async(token, i) => {
+        await resourceManagerContract.createResourceToken(token.name, token.symbol);
+      })
+    
+      //addBuilding(name, levelRequirements[], resourceRequirements[], maxLevel) create objects for these
+      buildings.forEach(async(building) => {
+        await builderContract.addBuilding(building.name, building.lvlReq, building.resReq, building.maxLvl);
+      })
+    
+      // Setup reward pools
+      rewardPools.forEach(async(pool) => {
+        await resourceManagerContract.setRewardPool(pool.buildingId, pool.rewardToken, pool.baseReward);
+      })
+  
+      //setup units
+      units.forEach(async(unit) => {
+        await unitsContract.addUnit(unit.name, unit.reqBuilding, unit.maxUnits, unit.buildingLevelReq, unit.timeCost, unit.resourceReq);
+        // console.log('added ', unit)
+      })
+    
+      // mint tokens to account
+      await resourceContract.mint(deployer.address, 0, 10000)
+      await resourceContract.mint(deployer.address, 1, 10000)
+      await resourceContract.mint(deployer.address, 2, 10000)
+      await resourceContract.mint(deployer.address, 3, 10000)
+      await resourceContract.mint(deployer.address, 4, 10000)
 
+      // New city setup
+      const cityName = 'First';
+      await kingdomsContract.buildCity(cityName);
+      await resourceContract.setApprovalForAll(BuiAdd, true);
+      await resourceContract.setApprovalForAll(UnitAdd, true);
+      const cityId = 0;
+      const buildingId = 0;
+      await builderContract.prepLevelUpBuilding(cityId, buildingId);
+      const buildingQueue = await builderContract.buildingQueue(deployer.address, cityId, buildingId)
+      await time.increaseTo(Number(buildingQueue));
+      await builderContract.completeLevelUpBuilding(cityId, buildingId);
+  
+      return { deployer, user1, user2, resourceContract, resourceManagerContract, kingdomsContract, builderContract, unitsContract, UnitAdd, ResAdd, ResManAdd, BuiAdd, KinAdd };
+    };
 
+    it('Should have a list of units', async function() {
+      const fixture = await loadFixture(setupUnitManagerFixture);
+
+      const unitsCreated = await fixture.unitsContract.getUnits();
+      const unitCount = await fixture.unitsContract.getUnitCount();
+
+      expect(Number(unitCount)).to.equal(3);
+      expect(unitsCreated[0].Name).to.equal(units[0].name);
+    })
+
+    it('Should let owner update a unit', async function() {
+      const fixture = await loadFixture(setupUnitManagerFixture);
+      await fixture.unitsContract.updateUnit(0, 'better warrior', units[0].reqBuilding, units[0].maxUnits, units[0].buildingLevelReq, units[0].timeCost, units[0].resourceReq);
+
+      const warrior =  await fixture.unitsContract.units(0);
+      expect(warrior.Name).to.equal('better warrior');
+
+      // fails from non-owner
+      await expect(fixture.unitsContract.connect(fixture.user1).updateUnit(0, 'better warrior', units[0].reqBuilding, units[0].maxUnits, units[0].buildingLevelReq, units[0].timeCost, units[0].resourceReq)).to.be.revertedWith("Ownable: caller is not the owner");
+
+    })
+
+    it('Should not let you build units without required buildings', async function() {
+      const fixture = await loadFixture(setupUnitManagerFixture);
+
+      await expect(fixture.unitsContract.startRecruitment(0, 0, 10)).to.be.revertedWith("Building level requirements not met");
+
+    })
+
+    it('Should let you build (start and complete recruitment) units', async function() {
+      const fixture = await loadFixture(setupUnitManagerFixture);
+      const cityId = 0;
+      const buildingId = 5;
+      await fixture.builderContract.prepLevelUpBuilding(cityId, buildingId);
+      const buildingQueue = await fixture.builderContract.buildingQueue(fixture.deployer.address, cityId, buildingId)
+      await time.increaseTo(Number(buildingQueue));
+      await fixture.builderContract.completeLevelUpBuilding(cityId, buildingId);
+
+      const unitId = 0;
+      const unitQuantity = 10;
+      // checks if another user can build units in your city
+      await expect(fixture.unitsContract.connect(fixture.user1).startRecruitment(cityId, unitId, unitQuantity)).to.be.revertedWith('Not owner of city');
+      await fixture.unitsContract.startRecruitment(cityId, unitId, unitQuantity);
+      const unitTime = await fixture.unitsContract.unitQueueTime(cityId, buildingId);
+      await time.increaseTo(Number(unitTime));
+      await fixture.unitsContract.completeRecruitment(cityId, unitId);
+
+      const myCityUnits = await fixture.kingdomsContract.getCityUnits(cityId);
+      const myUnits = myCityUnits.map(Number);
+      expect(myUnits[unitId]).to.equal(unitQuantity);
+
+    });
+    
   });
 
   

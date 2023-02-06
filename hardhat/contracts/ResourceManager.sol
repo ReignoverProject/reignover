@@ -5,6 +5,7 @@ import "./Resources.sol";
 import "./libs/Editor.sol";
 import "./interfaces/IKingdoms.sol";
 import "./interfaces/IResourceToken.sol"; 
+import "./interfaces/IUnitManager.sol"; 
 
 
 // Setup: set Builder as editor of this contract, this contract also needs to be an editor of Builder
@@ -20,6 +21,7 @@ contract ResourceManager is Editor {
     IKingdoms public Kingdoms;
     IResourceToken public Resources;
     IBuilder public Builder;
+    IUnitManager public Units;
     
     struct RewardPool {
         uint buildingId;
@@ -39,6 +41,7 @@ contract ResourceManager is Editor {
         uint id = Resources.createCollection(999999, "Reignover Project", _name, _symbol);
         resourceTokens.push(id);
         Builder.addResource(id);
+        Units.addResource(id);
         emit NewResource(id, _name);
     }
 
@@ -57,6 +60,10 @@ contract ResourceManager is Editor {
         Builder = IBuilder(_newContract);
     }
 
+    /** @notice sets the Unit Manager contract */
+    function setUnitManager(address _newContract) external onlyOwner {
+        Units = IUnitManager(_newContract);
+    }
     // The next section manages the minting of tokens over time to cities depending on their building levels
     // This is similar to a standard farm contract, but instead of getting more rewards based on tokens staked, it's based on level of the building
     // When an appropriate building is created, it sets the reward start timestamp

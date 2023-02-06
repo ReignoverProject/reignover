@@ -2,8 +2,7 @@
 
 pragma solidity ^0.8.7;
 
-interface IBuilder {
-    function getBuildingCount() external view returns(uint);
+interface IUnitManager {
     function addResource(uint _id) external;
 
 }
