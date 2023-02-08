@@ -23,6 +23,7 @@ contract Kingdoms is Editor{
     // uint forgeId = 6; // building ID for the forge, used to reduce research time
     uint maxCities = 1; // cities per wallet
     uint unitCount; // number of different types of units in UnitManager contract
+    uint buildingCount; // number of unique buildings from Builder contract
 
     // City is the base structure in the game. They can be traded between players (taken over)
     struct City {
@@ -51,10 +52,8 @@ contract Kingdoms is Editor{
     }
 
     /** @notice returns an array of building levels corresponding to the building index
-     * TODO update building count from builder address and store here to reduce calls
     *    */
     function getCityBuildingsWithLevel(uint _cityId) external view returns(uint[] memory) {
-        uint buildingCount = Builder.getBuildingCount();
         uint[] memory buildingList = new uint[](buildingCount);
         for (uint i = 0; i < buildingCount; i++) {
             buildingList[i] = cities[_cityId].buildings[i];
@@ -172,6 +171,10 @@ contract Kingdoms is Editor{
 
     function addNewUnit() external onlyEditor {
         unitCount++;
+    }
+
+    function addNewBuilding() external onlyEditor {
+        buildingCount++;
     }
 
     function setBuilderContract(address _newContract) external onlyOwner {

@@ -56,12 +56,13 @@ contract Builder is Editor {
     */ 
     function addBuilding(string memory _name, uint[] memory _levelRequirements, uint[] memory _resourceRequirements, uint _maxLevel ) external onlyOwner {
         buildingIdToName[buildingCount] = _name;
-        emit BuildingCreated(buildingCount, _name);
         buildingCount++;
         uint _buildingId = buildingCount-1;
         _setbuildingLevelRequirements(_buildingId, _levelRequirements);
         _setbuildingResourceRequirements(_buildingId, _resourceRequirements);
         _setBuildingMaxLevel(_buildingId, _maxLevel);
+        Kingdoms.addNewBuilding();
+        emit BuildingCreated(buildingCount-1, _name);
     }
 
     /** @notice returns array of buildings */
@@ -90,7 +91,7 @@ contract Builder is Editor {
         @param _requirements array index is the buildingID, index value is level required 
     */
     function _setbuildingLevelRequirements(uint _buildingId, uint[] memory _requirements) internal {
-        require(_requirements.length == buildingCount, "array length mismatch"); 
+        require(_requirements.length == buildingCount, "building array length mismatch"); 
         require(_requirements[_buildingId] == 0, "cannot require self");
         for (uint i=0; i < buildingCount; i++) {
             buildingLevelRequirements[_buildingId][i] = _requirements[i];
@@ -112,7 +113,7 @@ contract Builder is Editor {
         @param _requirements array index is the resource, index value is amount required 
     */
     function _setbuildingResourceRequirements(uint _buildingId, uint[] memory _requirements) internal {
-        require(_requirements.length == resources.length, "array length mismatch");
+        require(_requirements.length == resources.length, "resource array length mismatch");
         require(_requirements[0] == 0, "cannot require base token");
         for (uint i=0; i < resources.length; i++) {
             buildingResourceRequirements[_buildingId][i] = _requirements[i];

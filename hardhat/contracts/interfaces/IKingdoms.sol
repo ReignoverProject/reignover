@@ -13,4 +13,5 @@ interface IKingdoms {
     function getTotalForges(address _player) external view returns(uint);
     function updateUnit(uint _cityId, uint _unitId, uint _quantity, bool isAdding) external;
     function addNewUnit() external;
+    function addNewBuilding() external;
 }

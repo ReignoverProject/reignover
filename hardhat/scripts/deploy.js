@@ -63,19 +63,19 @@ const buildings = [
   },
   {
     name: "Barracks",
-    lvlReq: [1,1,1,1,0,0],
+    lvlReq: [0,0,0,0,0,0],
     resReq: [0, 100, 60, 60, 60],
     maxLvl: 100 
   },
   {
     name: "Stable",
-    lvlReq: [1,1,1,1,0,1,0],
+    lvlReq: [0,0,0,0,0,0,0],
     resReq: [0, 100, 60, 60, 60],
     maxLvl: 100 
   },
   {
     name: "Academy",
-    lvlReq: [1,1,1,1,0,1,1,0],
+    lvlReq: [0,0,0,0,0,0,0,0],
     resReq: [0, 100, 60, 60, 60],
     maxLvl: 100 
   },
@@ -133,7 +133,7 @@ const units = [
 
 async function main() {
   const [deployer, user1, user2] = await ethers.getSigners();
-
+  
   const resources = await hre.ethers.getContractFactory('Resources');
   const resourceContract = await resources.deploy();
   await resourceContract.deployed();
@@ -178,40 +178,40 @@ async function main() {
   await builderContract.addEditor(resourceManagerContract.address);
   await builderContract.addEditor(deployer.address);
   await unitsContract.addEditor(resourceManagerContract.address);
+  const delay = ms => new Promise(res => setTimeout(res, ms));
 
   // Create resources and buildings
   resourceTokens.forEach(async(token, i) => {
     await resourceManagerContract.createResourceToken(token.name, token.symbol);
+    console.log('resource: ', i)
+    await delay(2000);
   })
-  // await resourceManagerContract.createResourceToken(resourceTokens[0].name, resourceTokens[0].symbol);
-  // await resourceManagerContract.createResourceToken(resourceTokens[1].name, resourceTokens[1].symbol);
-  // await resourceManagerContract.createResourceToken(resourceTokens[2].name, resourceTokens[2].symbol);
-  // await resourceManagerContract.createResourceToken(resourceTokens[3].name, resourceTokens[3].symbol);
-  // await resourceManagerContract.createResourceToken(resourceTokens[4].name, resourceTokens[4].symbol);
 
+  await delay(1000);
+  
   //addBuilding(name, levelRequirements[], resourceRequirements[], maxLevel) create objects for these
-  buildings.forEach(async function (building) {
+  buildings.forEach(async(building, i) => {
     await builderContract.addBuilding(building.name, building.lvlReq, building.resReq, building.maxLvl);
+    console.log('building: ', i)
+    await delay(4000);
   })
-  // await builderContract.addBuilding(buildings[0].name, buildings[0].lvlReq, buildings[0].resReq, buildings[0].maxLvl);
-  // await builderContract.addBuilding(buildings[1].name, buildings[1].lvlReq, buildings[1].resReq, buildings[2].maxLvl);
-  // await builderContract.addBuilding(buildings[2].name, buildings[2].lvlReq, buildings[2].resReq, buildings[2].maxLvl);
-  // await builderContract.addBuilding(buildings[3].name, buildings[3].lvlReq, buildings[3].resReq, buildings[3].maxLvl);
-  // await builderContract.addBuilding(buildings[4].name, buildings[4].lvlReq, buildings[4].resReq, buildings[4].maxLvl);
 
+  await delay(1000);
   // Setup reward pools
-  rewardPools.forEach(async(pool) => {
+  rewardPools.forEach(async(pool, i) => {
     await resourceManagerContract.setRewardPool(pool.buildingId, pool.rewardToken, pool.baseReward);
+    console.log('pool: ', i)
+    await delay(2000);
   })
-  // await resourceManagerContract.setRewardPool(rewardPools[0].buildingId, rewardPools[0].rewardToken, rewardPools[0].baseReward);
-  // await resourceManagerContract.setRewardPool(rewardPools[1].buildingId, rewardPools[1].rewardToken, rewardPools[1].baseReward);
-  // await resourceManagerContract.setRewardPool(rewardPools[2].buildingId, rewardPools[2].rewardToken, rewardPools[2].baseReward);
-  // await resourceManagerContract.setRewardPool(rewardPools[3].buildingId, rewardPools[3].rewardToken, rewardPools[3].baseReward);
 
+  await delay(1000);
   //setup units
-  units.forEach(async(unit) => {
-    await unitsContract.addUnit(unit.name, unit.reqBuilding, unit.maxUnits, unit.lvlReq, unit.timeCost, unit.resReq);
+  units.forEach(async(unit, i) => {
+    await unitsContract.addUnit(unit.name, unit.reqBuilding, unit.maxUnits, unit.buildingLevelReq, unit.timeCost, unit.resourceReq);
+    console.log('unit: ', i)
+    await delay(2000);
   })
+  await delay(1000);
 
   // mint tokens to account
   await resourceContract.mint(deployer.address, 0, 10000)
@@ -220,7 +220,7 @@ async function main() {
   await resourceContract.mint(deployer.address, 3, 10000)
   await resourceContract.mint(deployer.address, 4, 10000)
 
-  console.log('Kingdoms:', KinAdd, 'Builder:', BuiAdd, 'ResourceManager:',ResManAdd, 'Resources:', ResAdd);
+  console.log('Kingdoms:', KinAdd, 'Builder:', BuiAdd, 'ResourceManager:',ResManAdd, 'Resources:', ResAdd, 'UnitManager: ', UnitAdd);
 
   // await hre.run('verify:verify', {
   //   address: nftContract.address,
