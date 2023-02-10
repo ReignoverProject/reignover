@@ -13,7 +13,7 @@ import { builderAddress, resourcesAddress } from "../../utils/constants";
 import { useGetOwnerCityId } from "../../utils/hooks/useGetBuildings";
 import { useGetApprovalSatus } from "../../utils/hooks/useGetResources";
 
-const Kingdom: NextPage = () => {
+const Units: NextPage = () => {
     const { address } = useAccount();
     
     const cityId = useGetOwnerCityId(address!)
@@ -70,4 +70,4 @@ const Kingdom: NextPage = () => {
     )
 }
 
-export default Kingdom
+export default Units

@@ -189,12 +189,28 @@ async function main() {
 
   await delay(1000);
   
-  //addBuilding(name, levelRequirements[], resourceRequirements[], maxLevel) create objects for these
-  buildings.forEach(async(building, i) => {
-    await builderContract.addBuilding(building.name, building.lvlReq, building.resReq, building.maxLvl);
-    console.log('building: ', i)
-    await delay(4000);
-  })
+  //addBuilding(name, levelRequirements[], resourceRequirements[], maxLevel) -- for each isn't working for buildings, probably trying to run them too quickly
+  // buildings.forEach(async(building, i) => {
+  //   await builderContract.addBuilding(building.name, building.lvlReq, building.resReq, building.maxLvl);
+  //   console.log('building: ', i)
+  //   await delay(4000);
+  // })
+  await builderContract.addBuilding(buildings[0].name, buildings[0].lvlReq, buildings[0].resReq, buildings[0].maxLvl);
+  console.log('building: ', 0)
+  await builderContract.addBuilding(buildings[1].name, buildings[1].lvlReq, buildings[1].resReq, buildings[1].maxLvl);
+  console.log('building: ', 1)
+  await builderContract.addBuilding(buildings[2].name, buildings[2].lvlReq, buildings[2].resReq, buildings[2].maxLvl);
+  console.log('building: ', 2)
+  await builderContract.addBuilding(buildings[3].name, buildings[3].lvlReq, buildings[3].resReq, buildings[3].maxLvl);
+  console.log('building: ', 3)
+  await builderContract.addBuilding(buildings[4].name, buildings[4].lvlReq, buildings[4].resReq, buildings[4].maxLvl);
+  console.log('building: ', 4)
+  await builderContract.addBuilding(buildings[5].name, buildings[5].lvlReq, buildings[5].resReq, buildings[5].maxLvl);
+  console.log('building: ', 5)
+  await builderContract.addBuilding(buildings[6].name, buildings[6].lvlReq, buildings[6].resReq, buildings[6].maxLvl);
+  console.log('building: ', 6)
+  await builderContract.addBuilding(buildings[7].name, buildings[7].lvlReq, buildings[7].resReq, buildings[7].maxLvl);
+  console.log('building: ', 7)
 
   await delay(1000);
   // Setup reward pools

@@ -24,6 +24,9 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
     const { resourceAmounts, } = useGetResources(account)    
     const myCityId = cityId
 
+    // build in timer effect to refresh buildings when one completes construction
+
+
     useContractEvent({
         address: builderAddress,
         abi: builderABI,
@@ -100,7 +103,7 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
                                         <p>Next Level: </p>
                                         {buildingsDetails[i]?.resourceRequirements.map((req:number, j) => {
                                             return (
-                                                <p key={j} className={`${!buildingsDetails[i]?.hasResources[j] && `text-red-800`}`}>{resourceTokens[i]?.symbol} {req},</p>
+                                                <p key={j} className={`${!buildingsDetails[i]?.hasResources[j] && `text-red-800`}`}>{resourceTokens[j]?.symbol} {req},</p>
                                             )
                                         })}
                                     </div>

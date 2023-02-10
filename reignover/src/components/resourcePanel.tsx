@@ -61,7 +61,7 @@ export const ResourcePanel: React.FC<IResourcePanel> = ({address, cityId}) => {
             <p className="font-semibold text-lg">Resources</p>
             {resourceTokens.map((token, i) => {
                 return (
-                    <div className="flex flex-row gap-2 items-center">
+                    <div className="flex flex-row gap-2 items-center" key={i}>
                         <div>
                         <Image src={token.icon} alt='resource icon' width={48} height={48} />
                         </div>

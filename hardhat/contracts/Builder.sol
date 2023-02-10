@@ -62,7 +62,7 @@ contract Builder is Editor {
         _setbuildingResourceRequirements(_buildingId, _resourceRequirements);
         _setBuildingMaxLevel(_buildingId, _maxLevel);
         Kingdoms.addNewBuilding();
-        emit BuildingCreated(buildingCount-1, _name);
+        emit BuildingCreated(_buildingId, _name);
     }
 
     /** @notice returns array of buildings */
