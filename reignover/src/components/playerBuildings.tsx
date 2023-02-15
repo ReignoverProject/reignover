@@ -1,11 +1,8 @@
-import { useState, useEffect } from "react"
-import { useGetAllBuildingRequirements, useGetBuildingLevels, useGetOwnerCityId } from "../utils/hooks/useGetBuildings"
-import { builderAddress, buildings } from "../utils/constants"
-import { IPlayerBuilding } from "../utils/types/playerInfo"
-import { useContractEvent, useContractReads } from "wagmi"
+import { useGetBuildingLevels } from "../utils/hooks/useGetBuildings"
+import { builderAddress } from "../utils/constants"
+import { useContractEvent } from "wagmi"
 import { builderABI } from "../utils/abis/Builder"
 import { BuildingDetails } from "./buildingDetails"
-import useRefresh from "../utils/useRefresh"
 
 interface IPlayerBuildings {
     cityId: number

@@ -58,7 +58,7 @@ export const useGetApprovalSatus = (account: string, operator: string) => {
     const isBuilderApproved = data
     const approvalCheckLoading = isLoading
 
-    return {isBuilderApproved, approvalCheckLoading, refetch}
+    return {data, isLoading, refetch}
 }
 
 export const useGetPendingResources = (cityId: Number) => {

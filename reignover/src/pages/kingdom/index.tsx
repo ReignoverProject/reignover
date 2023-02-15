@@ -17,11 +17,12 @@ const Kingdom: NextPage = () => {
     const { address } = useAccount();
     
     const cityId = useGetOwnerCityId(address!)
-    const id = Number(cityId.data)
-    const [hasCity, setHasCity] = useState(cityId.data !== undefined)
-    // console.log('has a city?', hasCity, cityId.data)
+    const id = Number(cityId.id)
+    const [hasCity, setHasCity] = useState(cityId.id !== undefined && cityId.id.length > 0)
+    // console.log('has a city?', hasCity, Number(cityId.id))
     const [showApprovalModal, setShowApprovalModal] = useState(false)
-    const {isBuilderApproved, approvalCheckLoading} = useGetApprovalSatus(address!, builderAddress)
+    const builderApproval = useGetApprovalSatus(address!, builderAddress)
+    //console.log('builder approval:', builderApproval.data)
     const { config } = usePrepareContractWrite({
         address: resourcesAddress,
         abi: resourcesABI,
@@ -34,9 +35,9 @@ const Kingdom: NextPage = () => {
         write?.()
     }
     useEffect(() => {
-        !approvalCheckLoading && !isBuilderApproved && setShowApprovalModal(true)
-        isBuilderApproved && setShowApprovalModal(false)
-    }, [isBuilderApproved])
+        !builderApproval.isLoading && builderApproval.data == false && setShowApprovalModal(true)
+        builderApproval.data && setShowApprovalModal(false)
+    }, [builderApproval.data])
 
 
     return (<>

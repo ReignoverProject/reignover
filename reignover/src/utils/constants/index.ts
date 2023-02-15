@@ -100,29 +100,32 @@ export const buildings = [
 ];
 
 
-const units = [
+export const units = [
   {
-    name: 'warrior',
+    name: 'Warrior',
     reqBuilding: 5,
     maxUnits: 100000,
     buildingLevelReq: 1,
     timeCost: 10,
     resourceReq: [0, 10, 10, 0, 10],
+    icon: '/images/units/warrior1.png',  
   },
   {
-    name: 'horsey',
+    name: 'Centaur',
     reqBuilding: 6,
     maxUnits: 100000,
     buildingLevelReq: 1,
     timeCost: 20,
     resourceReq: [0, 0, 0, 30, 30],
+    icon: '/images/units/centaur.png',  
   },
   {
-    name: 'mage',
+    name: 'Mage',
     reqBuilding: 7,
     maxUnits: 100000,
     buildingLevelReq: 1,
     timeCost: 40,
     resourceReq: [0, 10, 10, 10, 10],
+    icon: '/images/units/sage.png',  
   },
 ]

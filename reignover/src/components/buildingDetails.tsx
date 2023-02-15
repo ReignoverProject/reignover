@@ -24,7 +24,9 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
     const { resourceAmounts, } = useGetResources(account)    
     const myCityId = cityId
 
+    // TODOs
     // build in timer effect to refresh buildings when one completes construction
+    // starting building upgrade only affects one building, don't call all buildings to update
 
 
     useContractEvent({

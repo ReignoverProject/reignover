@@ -30,10 +30,10 @@ export const useGetOwnerCityId = (account: `0x${string}`) => {
     })
     if(isError) {console.log('get city id error: ', error)}
     //console.log('address, city ids', account, data, isSuccess)
-    let id: number | undefined;
+    let id: number[] | undefined = data as number[]
     //if (isSuccess && data !== undefined) {id = data[0]}
 
-    return {data, refetch}
+    return {id, refetch}
 }
 
 export const useGetBuildingLevels = (cityId: number) => {     

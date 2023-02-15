@@ -70,7 +70,6 @@ contract Kingdoms is Editor{
     }
 
     function getCityScore(uint _cityId) external view returns(uint) {
-        uint buildingCount = Builder.getBuildingCount();
         uint cityScore;
         for (uint i = 0; i < buildingCount; i++) {
             cityScore += cities[_cityId].buildings[i]**(1+i) ;
