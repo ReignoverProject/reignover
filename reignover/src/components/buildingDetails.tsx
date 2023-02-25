@@ -28,6 +28,10 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
     // build in timer effect to refresh buildings when one completes construction
     // starting building upgrade only affects one building, don't call all buildings to update
 
+    const handleQueueRefresh = () => {
+        queueRefetch()
+        refetch()
+    }
 
     useContractEvent({
         address: builderAddress,
@@ -41,6 +45,7 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
             }
         }
     })
+
     useContractEvent({
         address: builderAddress,
         abi: builderABI,
@@ -117,9 +122,9 @@ export const BuildingDetails: React.FC<IBuildingDetails> = ({account, buildingLe
                                     <p>{buildingsDetails[i]?.level}</p>
                                 </div>
                                 <div>
-                                    {!queueLoading && buildTime[i]!*1000 > 0 && buildTime[i]!*1000 > Date.now()
+                                    {buildTime[i]!*1000 > 0 && buildTime[i]!*1000 > Date.now()
                                     ? <button disabled>
-                                        <Countdown targetTime={buildTime[i]!*1000} />
+                                        <Countdown targetTime={buildTime[i]!*1000} refresh={handleQueueRefresh} />
                                     </button> 
                                     : buildTime[i]!*1000 > 0 && buildTime[i]!*1000 <= Date.now()
                                         ? <CompleteBuilding buildingId={i} cityId={cityId} refetch={refetch} />

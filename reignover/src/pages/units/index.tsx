@@ -14,7 +14,7 @@ import { resourcesABI } from "../../utils/abis/Resources";
 import { builderAddress, resourcesAddress, unitsAddress } from "../../utils/constants";
 import { useGetOwnerCityId } from "../../utils/hooks/useGetBuildings";
 import { useGetApprovalSatus } from "../../utils/hooks/useGetResources";
-
+   
 const Units: NextPage = () => {
     const { address } = useAccount();
     const router = useRouter()
@@ -41,9 +41,10 @@ const Units: NextPage = () => {
         unitApproval.data && setShowApprovalModal(false)
     }, [unitApproval.data])
 
-    useEffect(() => {
-        !hasCity && router.push('/kingdom')
-    })
+    // this about a way to handle not having a city?
+    // useEffect(() => {
+    //     !hasCity && router.push('/kingdom')
+    // }, [cityId])
 
 
     return (<>

@@ -22,5 +22,16 @@ export const useGetCityUnits = (cityId: number) => {
     return {unitList, isLoading, isError, error, refetch} 
 }
 
+export const useGetUnitQueueTime = (cityId: number, buildingId: number) => {
+            
+    const {data, isLoading, isError, error, refetch} = useContractRead({
+        address: kingdomAddress,
+        abi: kingdomsABI,
+        functionName: 'getCityUnits',
+        args: [cityId, buildingId],
+        cacheTime:  10_000_000,
+    })
+
+}
 
 

@@ -42,6 +42,8 @@ contract UnitManager is Editor {
     mapping(uint256 => mapping(uint256 => uint256)) public unitQueueTime;
     // cityId > buildingId > amount
     mapping(uint256 => mapping(uint256 => uint256)) public unitQueueAmount;
+    // cityId > buildingId > unitId
+    mapping(uint256 => mapping(uint256 => uint256)) public unitInQueue;
 
     event UnitCreated(uint256 unitId, string unitName);
     event UnitUpdated(uint indexed unitId, Unit oldUnit, Unit updatedUnit);
@@ -123,7 +125,8 @@ contract UnitManager is Editor {
         }
         unitQueueTime[_cityId][units[_unitId].RequiredBuilding] = block.timestamp + (units[_unitId].TimeCost * _amount);
         unitQueueAmount[_cityId][units[_unitId].RequiredBuilding] = _amount;
-        emit StartRecruitment(_cityId, _unitId, unitQueueTime[_cityId][_unitId]);
+        unitInQueue[_cityId][units[_unitId].RequiredBuilding] = _unitId;
+        emit StartRecruitment(_cityId, _unitId, unitQueueTime[_cityId][units[_unitId].RequiredBuilding]);
     }
 
     /** @notice updates amount of unit in kingdoms contract */
